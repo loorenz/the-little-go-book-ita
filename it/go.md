@@ -400,13 +400,13 @@ Molto probabilmente, in questo momento stai pensando di vedere tanti piccoli "pe
 
 Se vieni da un linguaggio dinamico, alcune cose ti sembreranno noise. Controintuitive. Se vieni da linguaggi a tipizzazione statica, invece, dovresti trovarti a tuo agio. Un po' alla volta, però, sono sicuro apprezzerai in ogni caso la pulizia verso la quale sarai portato.
 
-# Chapter 2 - Structures
+# Capitolo 2 - Strutture
 
-Go isn't an object-oriented (OO) language like C++, Java, Ruby and C#. It doesn't have objects nor inheritance and thus, doesn't have the many concepts associated with OO such as polymorphism and overloading.
+Go non è un linguaggio orientato agli oggetti come C++, Java, Ruby o C#. Non ha oggetti, niente ereditarietà, nessun concetto associabile alla programmazione orientata agli oggetti che conosciamo, come polimorfismo od overloading.
 
-What Go does have are structures, which can be associated with methods. Go also supports a simple but effective form of composition. Overall, it results in simpler code, but there'll be occasions where you'll miss some of what OO has to offer. (It's worth pointing out that *composition over inheritance* is an old battle cry and Go is the first language I've used that takes a firm stand on the issue.)
+In Go esistono le strutture, alle quali possiamo associare dei metodi. C'è anche una semplice (ma efficace) forma di composizione di queste strutture. Il risultato? Codice più semplice, anche se a volte sentirai la mancanza di ciò che viene offerto dallo sviluppo orientato agli oggetti. (Varrebbe la pena ricordare che nell'antica battaglia del *composition over inheritance* Go è uno dei primi linguaggi che ha preso una posizione ben precisa).
 
-Although Go doesn't do OO like you may be used to, you'll notice a lot of similarities between the definition of a structure and that of a class. A simple example is the following `Saiyan` structure:
+Insomma, Go è abbastanza lontano dall'OOP. Tuttavia, ci sono alcune similitudini da notare nella definizione di una struttura e di una classe. Facciamo subito un esempio: ecco una struttura. La chiameremo `Sayian`.
 
 ```go
 type Saiyan struct {
@@ -415,13 +415,13 @@ type Saiyan struct {
 }
 ```
 
-We'll soon see how to add a method to this structure, much like you'd have methods as part of a class. Before we do that, we have to dive back into declarations.
+Non è poi così illeggibile, vero?
 
-## Declarations and Initializations
+## Dichiarazioni ed Inizializzazioni
 
-When we first looked at variables and declarations, we looked only at built-in types, like integers and strings. Now that we're talking about structures, we need to expand that conversation to include pointers.
+Nel capitolo precedente, parlando delle variabili, abbiamo dato uno sguardo ai principali tipi già presenti in Go, come interi e stringhe. Ora che la nostra "conversazione" a riguardo si sta ampliando, vale la pena spiegare il concetto di puntatore (pointer) nelle prossime righe.
 
-The simplest way to create a value of our structure is:
+Dunque: abbiamo definito la nostra struttura. Diamo adesso un valore ad una variabile di questo tipo.
 
 ```go
 goku := Saiyan{
@@ -430,32 +430,41 @@ goku := Saiyan{
 }
 ```
 
-*Note:* The trailing `,` in the above structure is required. Without it, the compiler will give an error. You'll appreciate the required consistency, especially if you've used a language or format that enforces the opposite.
+*Nota:* la virgola `,` nella struttura è necessaria anche dopo l'ultimo elemento della struttura. Senza, infatti, il compilatore restituirà un errore.
 
-We don't have to set all or even any of the fields. Both of these are valid:
+Non devi necessariamente valorizzare tutti i campi della struttura. Ad esempio, un'istruzione del genere è perfettamente valida:
 
 ```go
 goku := Saiyan{}
 
-// or
+// oppure...
 
 goku := Saiyan{Name: "Goku"}
 goku.Power = 9000
 ```
 
-Just like unassigned variables have a zero value, so do fields.
+Proprio come accade per le variabili, infatti, anche i campi di una struttura hanno dei valori di default.
 
-Furthermore, you can skip the field name and rely on the order of the field declarations (though for the sake of clarity, you should only do this for structures with few fields):
+Se ti è comodo, puoi evitare di specificare il nome del campo da valorizzare e usare come "ordine" lo stesso in cui hai dichiarato i vari campi nella struttura. Ecco un esempio:
 
 ```go
 goku := Saiyan{"Goku", 9000}
+
+// che è uguale a...
+
+goku := Saiyan{
+  Name: "Goku",
+  Power: 9000,
+}
 ```
 
-What all of the above examples do is declare a variable `goku` and assign a value to it.
+Insomma, come vedi ci sono molti modi di fare assegnare alla variabile `goku` uno specifico valore. Detto questo, veniamo ai puntatori.
 
-Many times though, we don't want a variable that is directly associated with our value but rather a variable that has a pointer to our value. A pointer is a memory address; it's the location of where to find the actual value. It's a level of indirection. Loosely, it's the difference between being at a house and having directions to the house.
+Non sempre, appunto, avrai bisogno di accedere al valore di una variabile. In alcuni casi avrai bisogno di un puntatore a quella variabile, a quel valore. Puoi vedere un puntatore come un indirizzo specifico di memoria. Il "posto" dove trovare quel valore. Un po' come "essere a casa" e "avere l'indirizzo di casa", per capirci.
 
-Why do we want a pointer to the value, rather than the actual value? It comes down to the way Go passes arguments to a function: as copies. Knowing this, what does the following print?
+La domanda sorge spontanea: perché mai dovremmo aver bisogno di un puntatore?
+
+Semplice: in Go, normalmente, gli argomenti di una funzione vengono passati come copie. Che significa? Facciamo una prova per capire meglio. Guarda questo codice:
 
 ```go
 func main() {
@@ -469,7 +478,9 @@ func Super(s Saiyan) {
 }
 ```
 
-The answer is 9000, not 19000. Why? Because `Super` made changes to a copy of our original `goku` value and thus, changes made in `Super` weren't reflected in the caller. To make this work as you probably expect, we need to pass a pointer to our value:
+Sai dirmi quale sarà il suo output? 19000? Sbagliato. La funzione `Super`, certo, aggiunge 10000 al valore di `Power`... ma l'argomento passato alla funzione è comunque una copia del "goku originale" che si trova in `main`. Nello scope di `main`, quindi, `Power` rimane 9000.
+
+Per far funzionare il tutto avremo bisogno di usare un puntatore. Così:
 
 ```go
 func main() {
@@ -483,11 +494,11 @@ func Super(s *Saiyan) {
 }
 ```
 
-We made two changes. The first is the use of the `&` operator to get the address of our value (it's called the *address of* operator). Next, we changed the type of parameter `Super` expects. It used to expect a value of type `Saiyan` but now expects an address of type `*Saiyan`, where `*X` means *pointer to value of type X*. There's obviously some relation between the types `Saiyan` and `*Saiyan`, but they are two distinct types.
+Guarda bene: abbiamo fatto due piccole ma importantissime modifiche. Innanzitutto, abbiamo usato l'operatore `&` che serve ad ottenere l'indirizzo della variabile con cui viene usato. Viene infatti chiamato l'operatore "address of". Come conseguenza, quindi, abbiamo modificato il tipo di parametro che `Super` si aspetta. Non più un `Saiyan` dunque, bensì un `*Saiyan` (o *puntatore a Saiyan*). C'è quindi una relazione tra `Saiyan` e `*Saiyan`, anche se rimangono due tipi separati e distinti.
 
-Note that we're still passing a copy of `goku's` value to `Super` it just so happens that `goku's` value has become an address. That copy is the same address as the original, which is what that indirection buys us. Think of it as copying the directions to a restaurant. What you have is a copy, but it still points to the same restaurant as the original.
+Proviamo ad eseguire ora il programma: il risultato stavolta sarà 19000!
 
-We can prove that it's a copy by trying to change where it points to (not something you'd likely want to actually do):
+Giusto come conferma ulteriore, modifica come segue il codice ed esegui nuovamente il programma.
 
 ```go
 func main() {
@@ -501,15 +512,15 @@ func Super(s *Saiyan) {
 }
 ```
 
-The above, once again, prints 9000. This is how many languages behave, including Ruby, Python, Java and C#. Go, and to some degree C#, simply make the fact visible.
+Stavolta il risultato sarà 9000. Perché? Guarda bene: hai aggiunto `&` in `Super`. Stai lavorando di nuovo con una copia.
 
-It should also be obvious that copying a pointer is going to be cheaper than copying a complex structure. On a 64-bit machine, a pointer is 64 bits large. If we have a structure with many fields, creating copies can be expensive. The real value of pointers though is that they let you share values. Do we want `Super` to alter a copy of `goku` or alter the shared `goku` value itself?
+Un'altra cosa su cui vale la pena riflettere è il "peso": copiare un puntatore è molto meglio rispetto al copiare una struttura complessa e passarla come parametro... non trovi? Su una macchina a 64-bit, un puntatore è grande ben 64 bit. Se ci trovassimo ad usare strutture molto grandi, creare delle copie sarebbe decisamente problematico. Il vero punto di forza consiste proprio nella condivisione di questo valore.
 
-All this isn't to say that you'll always want a pointer. At the end of this chapter, after we've seen a bit more of what we can do with structures, we'll re-examine the pointer-versus-value question.
+Se alcune cose non ti sono chiarissime, rileggi più di una volta questa parte. In ogni caso non temere: continueremo ad affrontare la questione puntatore/valore più avanti.
 
-## Functions on Structures
+## Associare Metodi alle Strutture
 
-We can associate a method with a structure:
+Possiamo "associare" un metodo ad una struttura così:
 
 ```go
 type Saiyan struct {
@@ -522,7 +533,7 @@ func (s *Saiyan) Super() {
 }
 ```
 
-In the above code, we say that the type `*Saiyan` is the **receiver** of the `Super` method. We call `Super` like so:
+Con il codice qui sopra stiamo affermando che `*Saiyan` è il ricevente (receiver) del metodo `Super`. Che possiamo chiamare così:
 
 ```go
 goku := &Saiyan{"Goku", 9001}
@@ -530,9 +541,9 @@ goku.Super()
 fmt.Println(goku.Power) // will print 19001
 ```
 
-## Constructors
+## Costruttori
 
-Structures don't have constructors. Instead, you create a function that returns an instance of the desired type (like a factory):
+Le strutture *non* hanno costruttori. Puoi però creare delle funzioni che ritornano un'istanza del tipo di cui hai bisogno (un po' come avviene con le factory, per capirci).
 
 ```go
 func NewSaiyan(name string, power int) *Saiyan {
@@ -543,9 +554,7 @@ func NewSaiyan(name string, power int) *Saiyan {
 }
 ```
 
-This pattern rubs a lot of developers the wrong way. On the one hand, it's a pretty slight syntactical change; on the other, it does feel a little less compartmentalized.
-
-Our factory doesn't have to return a pointer; this is absolutely valid:
+Sia chiaro: non è necessario far ritornare un puntatore ad una funzione del genere. Anche questa funzione qui di seguito, infatti, è perfettamente valida.
 
 ```go
 func NewSaiyan(name string, power int) Saiyan {
@@ -556,24 +565,26 @@ func NewSaiyan(name string, power int) Saiyan {
 }
 ```
 
-## New
+## Funzione "New"
 
-Despite the lack of constructors, Go does have a built-in `new` function which is used to allocate the memory required by a type. The result of `new(X)` is the same as `&X{}`:
+Nonostante la mancanza di un costruttore, Go ha una funzione `new` che permette di allocare la memoria necessaria per un certo tipo di variabile. Il risultato di `new(X)` sarà lo stesso di `&X{}`.
 
 ```go
 goku := new(Saiyan)
-// same as
+
+// è uguale a...
+
 goku := &Saiyan{}
 ```
 
-Which you use is up to you, but you'll find that most people prefer the latter whenever they have fields to initialize, since it tends to be easier to read:
+Sta a te decidere quale usare, tuttavia sappi che molti  trovano più comoda la seconda nel momento in cui ci sono anche dei campi da inizializzare, visto che il risultato è più leggibile.
 
 ```go
 goku := new(Saiyan)
 goku.name = "goku"
 goku.power = 9001
 
-//vs
+// contro...
 
 goku := &Saiyan {
   name: "goku",
@@ -581,13 +592,13 @@ goku := &Saiyan {
 }
 ```
 
-Whichever approach you choose, if you follow the factory pattern above, you can shield the rest of your code from knowing and worrying about any of the allocation details.
+Ad ogni modo, a prescindere da quale sia l'approccio scelto, ricorda che scegliere il "factory" pattern visto poco sopra è molto utile: puoi separare il resto del tuo codice da tutti i dettagli relativi all'allocazione.
 
-## Fields of a Structure
+## Campi di una Struttura
 
-In the example that we've seen so far, `Saiyan` has two fields `Name` and `Power` of types `string` and `int`, respectively. Fields can be of any type -- including other structures and types that we haven't explored yet such as arrays, maps, interfaces and functions.
+Nell'esempio visto finora, `Saiyan` ha due campi: `Name` e `Power`, rispettivamente di tipo `string` ed `int`. I campi di una struttura possono essere di qualsiasi tipo (incluse altre strutture).
 
-For example, we could expand our definition of `Saiyan`:
+Ecco un esempio perfettamente valido di `Saiyan` (con una piccola aggiunta):
 
 ```go
 type Saiyan struct {
@@ -597,7 +608,7 @@ type Saiyan struct {
 }
 ```
 
-which we'd initialize via:
+... che potremmo inizializzare così:
 
 ```go
 gohan := &Saiyan{
@@ -611,9 +622,9 @@ gohan := &Saiyan{
 }
 ```
 
-## Composition
+## Composizione
 
-Go supports composition, which is the act of including one structure into another. In some languages, this is called a trait or a mixin. Languages that don't have an explicit composition mechanism can always do it the long way. In Java, there's the possibility to extend structures with *inheritance* but, in a scenario where this is not an option, a mixin would be written like this:
+Come già menzionato prima, Go supporta la composizione, che consiste nell'includere una struttura dentro l'altra. In alcuni linguaggi si parla di *mixin* o *trait*. Ecco un esempio in un altro linguaggio (Java):
 
 ```java
 public class Person {
@@ -636,7 +647,7 @@ public class Saiyan {
 }
 ```
 
-This can get pretty tedious. Every method of `Person` needs to be duplicated in `Saiyan`. Go avoids this tediousness:
+Ecco una dichiarazione simile, stavolta in Go.
 
 ```go
 type Person struct {
@@ -660,7 +671,9 @@ goku := &Saiyan{
 goku.Introduce()
 ```
 
-The `Saiyan` structure has a field of type `*Person`. Because we didn't give it an explicit field name, we can implicitly access the fields and functions of the composed type. However, the Go compiler *did* give it a field name, consider the perfectly valid:
+La struttura `Saiyan` conta al suo interno un campo di tipo `*Person`. Non avendo dato esplicitamente un nome al campo di tipo `*Person`, possiamo accedere ai suoi membri direttamente dal tipo "composto".
+
+Il compilatore ha gestito in modo autonomo la cosa. Guarda qui:
 
 ```go
 goku := &Saiyan{
@@ -670,15 +683,13 @@ fmt.Println(goku.Name)
 fmt.Println(goku.Person.Name)
 ```
 
-Both of the above will print "Goku".
-
-Is composition better than inheritance? Many people think that it's a more robust way to share code. When using inheritance, your class is tightly coupled to your superclass and you end up focusing on hierarchy rather than behavior.
+Le ultime due istruzioni sono entrambe valide, e stamperanno lo stesso valore.
 
 ### Overloading
 
-While overloading isn't specific to structures, it's worth addressing. Simply, Go doesn't support overloading. For this reason, you'll see (and write) a lot of functions that look like `Load`, `LoadById`, `LoadByName` and so on.
+Nonostante l'overaloading non sia qualcosa di "specifico" delle strutture, vale la pena comunque darci un'occhiata. Di base, Go *non* supporta l'overloading. Di conseguenza, vedrai (e scriverai) spesso funzioni come `Load`, `LoadById`, `LoadByName` e così via.
 
-However, because implicit composition is really just a compiler trick, we can "overwrite" the functions of a composed type. For example, our `Saiyan` structure can have its own `Introduce` function:
+Ora, dato che la composizione implicita è un (comodo) trucco del compilatore, possiamo anche "sovrascrivere" una funzione per un tipo composto. Abbinando il codice qui sotto a quello visto nell'esempio precedente...
 
 ```go
 func (s *Saiyan) Introduce() {
@@ -686,23 +697,23 @@ func (s *Saiyan) Introduce() {
 }
 ```
 
-The composed version is always available via `s.Person.Introduce()`.
+... avremo due diverse versioni di `Introduce`. Quella della struttura `Person` sarà disponibile comunque tramite `s.Person.Introduce()`.
 
-## Pointers versus Values
+## Puntatori Vs. Valori
 
-As you write Go code, it's natural to ask yourself *should this be a value, or a pointer to a value?* There are two pieces of good news. First, the answer is the same regardless of which of the following we're talking about:
+Quando scriverai il codice dei tuoi programmi in Go, spesso ti ritroverai a chiederti: *devo usare un puntatore oppure direttamente un valore?* Beh, un valore non è una cattiva scelta in casi come:
 
-* A local variable assignment
-* Field in a structure
-* Return value from a function
-* Parameters to a function
-* The receiver of a method
+* assegnamento di una variabile in locale;
+* campo in una struttura;
+* valore di ritorno di una funzione;
+* parametro di una funzione;
+* ricevente di un metodo;
 
-Secondly, if you aren't sure, use a pointer.
+Per il resto... nel dubbio, usa un puntatore.
 
-As we already saw, passing values is a great way to make data immutable (changes that a function makes to it won't be reflected in the calling code). Sometimes, this is the behavior that you'll want but more often, it won't be.
+Ad ogni modo, ricorda che passare un valore (e non un puntatore) ad una funzione è un ottimo modo per preservare l'immutabilità. Può essere il comportamento di cui hai bisogno, altre volte invece no. Tienilo a mente.
 
-Even if you don't intend to change the data, consider the cost of creating a copy of large structures. Conversely, you might have small structures, say:
+Considera poi, comunque, i costi di creazione di una copia di una tale struttura. In altri casi però potresti avere strutture semplici, come questa:
 
 ```go
 type Point struct {
@@ -711,13 +722,15 @@ type Point struct {
 }
 ```
 
-In such cases, the cost of copying the structure is probably offset by being able to access `X` and `Y` directly, without any indirection.
+In casi come questi, il costo di copia della struttura è rilevante quasi quanto l'accesso diretto, senza troppo overhead.
 
-Again, these are all pretty subtle cases. Unless you're iterating over thousands or possibly tens of thousands of such points, you wouldn't notice a difference.
+Insomma: valuta caso per caso. La pratica rende perfetti.
 
-## Before You Continue
+## Prima di Proseguire
 
-From a practical point of view, this chapter introduced structures, how to make an instance of a structure a receiver of a function, and added pointers to our existing knowledge of Go's type system. The following chapters will build on what we know about structures as well as the inner workings that we've explored.
+Questo capitolo ti ha dato una prima infarinatura sulle strutture, come crearne un'istanza e come rendere queste strutture "ricevitori" di una funzione. Abbiamo inoltre aggiunto i puntatori al nostro bagaglio.
+
+Nei prossimi capitoli aggiungeremo altra carne al fuoco: nuove strutture e approfondimenti sui meccanismi di questo linguaggio.
 
 # Chapter 3 - Maps, Arrays and Slices
 
