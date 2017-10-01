@@ -1590,13 +1590,13 @@ Abbiamo dato uno sguardo ai vari aspetti dello sviluppo in Go. In questo capitol
 
 Una cosa è certa: non abbiamo visto tutto quello che Go può offrirci. Tuttavia, con questa prima infarinatura dovremmo essere capaci di gestire al meglio la maggior parte delle situazioni.
 
-# Chapter 6 - Concurrency
+# Capitolo 6 - Concorrenza
 
-Go is often described as a concurrent-friendly language. The reason for this is that it provides a simple syntax over two powerful mechanisms: goroutines and channels.
+Go viene spesso descritto come un linguaggio concurrent-friendly, cioè orientato alla concorrenza. Il motivo è presto spiegato: offre una sintassi davvero molto semplice per risolvere questo tipo di problema. In questo capitolo esploreremo i due meccanismi chiave: goroutine e channel.
 
-## Goroutines
+## Le Goroutine
 
-A goroutine is similar to a thread, but it is scheduled by Go, not the OS. Code that runs in a goroutine can run concurrently with other code. Let's look at an example:
+Una goroutine è simile ad un thread, con la differenza di essere schedulato da Go e non dal sistema operativo. Il codice che viene eseguito in una goroutine può essere seguito in parallelo con altro codice. Vediamo un esempio:
 
 ```go
 package main
@@ -1618,7 +1618,7 @@ func process() {
 }
 ```
 
-There are a few interesting things going on here, but the most important is how we start a goroutine. We simply use the `go` keyword followed by the function we want to execute. If we just want to run a bit of code, such as the above, we can use an anonymous function. Do note that anonymous functions aren't only used with goroutines, however.
+Ok, qui ci sono un paio di cose interessanti da conoscere, ma concentriamoci sulla più importante: come avviare una goroutine. La keyword da usare è `go`, seguita dalla funzione che vogliamo eseguire. Nulla ci vieta di usare una funzione anonima al posto del codice qui in alto, sia chiaro. Ecco, qualcosa del genere:
 
 ```go
 go func() {
@@ -1626,17 +1626,21 @@ go func() {
 }()
 ```
 
-Goroutines are easy to create and have little overhead. Multiple goroutines will end up running on the same underlying OS thread. This is often called an M:N threading model because we have M application threads (goroutines) running on N OS threads. The result is that a goroutine has a fraction of overhead (a few KB) than OS threads. On modern hardware, it's possible to have millions of goroutines.
+Le Goroutine sono semplici da creare, come vedi, ed hanno un piccolissimo overhead. Di base, più goroutine potranno essere eseguite sullo stesso thread del sistema operativo. Il threading model a cui si fa riferimento viene descritto come il M:N, nel senso che abbiamo M thread dell'applicazione che girano su N thread del sistema operativo.
 
-Furthermore, the complexity of mapping and scheduling is hidden. We just say *this code should run concurrently* and let Go worry about making it happen.
+Il rapporto non è quindi 1:1. Il risultato è che su un hardware decente è possibile far girare, contemporaneamente, milioni di goroutine!
 
-If we go back to our example, you'll notice that we had to `Sleep` for a few milliseconds. That's because the main process exits before the goroutine gets a chance to execute (the process doesn't wait until all goroutines are finished before exiting). To solve this, we need to coordinate our code.
+Inoltre, tutta la complessità del mapping e scheduling delle goroutine è nascosta allo sviluppatore. Noi diciamo semplicemente "ok, questo codice dovrebbe essere eseguito in modo asincrono" e Go si occupa del resto.
 
-## Synchronization
+Adesso torniamo per un secondo al nostro esempio: ti starai chiedendo perché mai abbiamo usato lo `Sleep` per fermare l'applicazione. Domanda legittima: la verità è che omettendo l'istruzione il processo principale termina prima dell'esecuzione della goroutine! Certo, nel lavoro di tutti i giorni non è qualcosa che si può fare: scopriamo come coordinare il nostro codice e fare le cose per bene!
 
-Creating goroutines is trivial, and they are so cheap that we can start many; however, concurrent code needs to be coordinated. To help with this problem, Go provides `channels`. Before we look at `channels`, I think it's important to understand a little bit about the basics of concurrent programming.
+## Sincronizzazione
 
-Writing concurrent code requires that you pay specific attention to where and how you read and write values. In some ways, it's like programming without a garbage collector -- it requires that you think about your data from a new angle, always watchful for possible danger. Consider:
+Creare una goroutine, come abbiamo visto, è roba da poco. Così facili che è un attimo arrivare a crearne quante a bizzeffe. Tuttavia, il codice concorrente va coordinato. Ed ecco che arriviamo, così, al secondo strumento che ci viene messo a disposizione da Go: i channel. Prima di guardare i channel da vicino, però, vediamo un po' di cose sulle basi della programmazione concorrente.
+
+Scrivere codice concorrente richiede attenzione. Nello specifico, tanta attenzione su dove e come leggi (e scrivi). In un certo senso è come sviluppare senza un garbage collector: devi pensare ai tuoi dati da una diversa angolazione, stando attenti ai vari pericoli che ci si possono parare davanti.
+
+Facciamo un esempio:
 
 ```go
 package main
@@ -1661,13 +1665,13 @@ func incr() {
 }
 ```
 
-What do you think the output will be?
+Rispondi: quale pensi sarà l'output di questo codice?
 
-If you think the output is `1, 2, ... 20` you're both right and wrong. It's true that if you run the above code, you'll sometimes get that output. However, the reality is that the behavior is undefined. Why? Because we potentially have multiple (two in this case) goroutines writing to the same variable, `counter`, at the same time. Or, just as bad, one goroutine would be reading `counter` while another writes to it.
+Se stai per dirmi `1, 2, 3, 4 ... 20` reggiti forte: hai sia ragione che torto! Mi spiego: è assolutamente che vero che, di tanto in tanto, eseguendo questo codice otterrai quel risultato, in sequenza. Tuttavia, la realtà è diversa: il comportamento di questo codice è indefinito perché abbiamo più goroutine che vengono eseguite contemporaneamente. Che scrivono tutte nella variabile `counter`. Una di queste goroutine potrebbe leggerne il valore mentre un'altra ci scrive sopra.
 
-Is that really a danger? Yes, absolutely. `counter++` might seem like a simple line of code, but it actually gets broken down into multiple assembly statements -- the exact nature is dependent on the platform that you're running. If you run this example, you'll see that very often the numbers are printed in a weird order, and/or numbers are duplicated/missing. There are worse possibilities too, such as system crashes or accessing an arbitrary piece of data and incrementing it!
+Fidati se ti dico che è una cosa decisamente pericolosa. Quel `counter++`, piccolo ed indifeso, una volta compilato viene spezzato in tante istruzioni assembly e... la natura della loro esecuzione, di conseguenza, cambia in base alla piattaforma su cui vengono eseguite. I numeri quindi verranno stampati in un'ordine strano, a volte alcuni di questi numeri mancheranno, altre volte li vedrai duplicati. Per assurdo, la stessa applicazione potrebbe crashare.
 
-The only concurrent thing you can safely do to a variable is to read from it. You can have as many readers as you want, but writes need to be synchronized. There are various ways to do this, including using some truly atomic operations that rely on special CPU instructions. However, the most common approach is to use a mutex:
+L'unica cosa "concorrente" che puoi fare in tutta sicurezza è leggere quella variabile. Puoi avere tutti i lettori di questo mondo lì, appesi, ma qualsiasi scrittura deve essere sincronizzata. Ci sono vari modi di raggiungere l'obiettivo: il più comune di tutti è l'uso di un mutex:
 
 ```go
 package main
@@ -1698,13 +1702,13 @@ func incr() {
 }
 ```
 
-A mutex serializes access to the code under lock. The reason we simply define our lock as `lock sync.Mutex` is because the default value of a `sync.Mutex` is unlocked.
+Un mutex non fa altro he serializzare gli accessi al codice sotto lock. Abbiamo definito il nostro lock con `lock sync.Mutex`. Di default il valore di `sync.Mutex` è "unlocked", sbloccato.
 
-Seems simple enough? The example above is deceptive. There's a whole class of serious bugs that can arise when doing concurrent programming. First of all, it isn't always so obvious what code needs to be protected. While it might be tempting to use coarse locks (locks that cover a large amount of code), that undermines the very reason we're doing concurrent programming in the first place. We generally want fine locks; else, we end up with a ten-lane highway that suddenly turns into a one-lane road.
+Sembra semplice, vero? Lo è, anche se l'esempio che hai appena visto, devo ammetterlo, è ingannevole. C'è infatti tutta una serie di bug che si possono presentare quando si parla di programmazione concorrente. In primis perché non è sempre così ovvio capire quale codice si vuole "proteggere": può sembrare comodo usare un lock che copre un bel po' di codice, ma non è la cosa migliore da fare. Anche perché rischiamo di fare un progetto per un'autostrada a dieci corsie e finire comunque con una stradina a corsia singola.
 
-The other problem has to do with deadlocks. With a single lock, this isn't a problem, but if you're using two or more locks around the same code, it's dangerously easy to have situations where goroutineA holds lockA but needs access to lockB, while goroutineB holds lockB but needs access to lockA.
+Un altro problema riguarda i deadlock. Con un singolo lock il problema non si pone, ma cosa succede se si "accavallano" più lock insieme? Devi sapere che è straordinariamente semplice trovarsi nella situazione in cui la goroutine A effettua un lock A ma ha bisogno di accedere all'elemento sotto un lock B, mentre una goroutine B sta bloccando del codice tramite il lock B che a sua volta ha bisogno di accesso al lock A. Una cosa del genere è difficile da capire, figuriamoci da debuggare.
 
-It actually *is* possible to deadlock with a single lock, if we forget to release it. This isn't as dangerous as a multi-lock deadlock (because those are *really* tough to spot), but just so you can see what happens, try running:
+Volendo, possiamo creare un deadlock con un solo lock... basta scordarsi di sbloccarlo a fine esecuzione! Guarda qui:
 
 ```go
 package main
@@ -1725,11 +1729,11 @@ func main() {
 }
 ```
 
-There's more to concurrent programming than what we've seen so far. For one thing, there's another common mutex called a read-write mutex. This exposes two locking functions: one to lock for reading and one to lock for writing. This distinction allows multiple simultaneous readers while ensuring that writing is exclusive. In Go, `sync.RWMutex` is such a lock. In addition to the `Lock` and `Unlock` methods of a `sync.Mutex`, it also exposes `RLock` and `RUnlock` methods; where `R` stands for *Read*. While read-write mutexes are commonly used, they place an additional burden on developers: we must now pay attention to not only when we're accessing data, but also how.
+La programmazione concorrente non è comunque così semplice. C'è tanto da conoscere e da sapere, l'argomento è davvero ampio. Ad esempio, c'è un altro tipo di mutex chiamato "read-write mutex". Permette di gestire un lock per la scrittura ed uno per la lettura. Questa distinzione ti permette, volendo, di avere più lettori contemporaneamente mentre i vari "scrittori" devono mettersi in fila. Oltre alle funzioni `Lock` ed `Unlock` già viste ce ne sono altre due: `RLock` ed `RUnlock`, dove `R` sta per *Read*, ovviamente.
 
-Furthermore, part of concurrent programming isn't so much about serializing access across the narrowest possible piece of code; it's also about coordinating multiple goroutines. For example, sleeping for 10 milliseconds isn't a particularly elegant solution. What if a goroutine takes more than 10 milliseconds? What if it takes less and we're just wasting cycles? Also, what if instead of just waiting for goroutines to finish, we want to tell one *hey, I have new data for you to process!*?
+La programmazione concorrente però non consiste solo nel serializzare gli accessi alle scritture e via. C'è anche, come dicevamo prima, la parte di coordinazione delle goroutine. Lo so che forse ci speravi, ma mettere in sleep il processo per dieci millisecondi non è la soluzione migliore (soprattutto la più elegante).
 
-These are all things that are doable without `channels`. Certainly for simpler cases, I believe you **should** use primitives such as `sync.Mutex` and `sync.RWMutex`, but as we'll see in the next section, `channels` aim at making concurrent programming cleaner and less error-prone.
+Ricorda che per situazioni molto semplici i mutex sono una soluzione più che sufficiente. Esistono, usali! Per situazioni più complesse, invece... è arrivato il momento di scoprire i `channel` e capire a cosa servono.
 
 ## Channels
 
