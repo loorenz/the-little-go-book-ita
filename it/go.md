@@ -1735,41 +1735,41 @@ La programmazione concorrente però non consiste solo nel serializzare gli acces
 
 Ricorda che per situazioni molto semplici i mutex sono una soluzione più che sufficiente. Esistono, usali! Per situazioni più complesse, invece... è arrivato il momento di scoprire i `channel` e capire a cosa servono.
 
-## Channels
+## Channel
 
-The challenge with concurrent programming stems from sharing data. If your goroutines share no data, you needn't worry about synchronizing them. That isn't an option for all systems, however. In fact, many systems are built with the exact opposite goal in mind: to share data across multiple requests. An in-memory cache or a database, are good examples of this. This is becoming an increasingly common reality.
+Quando si parla di programmazione concorrente, la vera sfida è una sola: la condivisione dei dati. Se le tue goroutine non condividono dati, non hai bisogno di sicnronizzarle e coordinarle. Non è, però, una scelta che puoi fare sempre. In realtà la maggior parte dei sistemi esistenti viene costruita con questo specifico obiettivo: condividere dati nel contesto di più richieste, contemporaneamente. Un ottimo esempio è un sistema di cache in-memory, o magari un database.
 
-Channels help make concurrent programming saner by taking shared data out of the picture. A channel is a communication pipe between goroutines which is used to pass data. In other words, a goroutine that has data can pass it to another goroutine via a channel. The result is that, at any point in time, only one goroutine has access to the data.
+In Go, i channel si occupano di rendere più semplice la programmazione concorrente portando i dati "al di fuori" del quadro generale. Immagina i channel come un canale di comunicazione tra diverse goroutine, che così facendo possono passarsi dei dati. Il risultato? In un qualsiasi momento dell'esecuzione del nostro codice, solo una goroutine ha accesso effettivamente al dato.
 
-A channel, like everything else, has a type. This is the type of data that we'll be passing through our channel. For example, to create a channel which can be used to pass an integer around, we'd do:
+Un channel, come qualsiasi altra cosa, ha un tipo. Viene incluso anche il tipo di dato che passeremo nel canale. Ad esempio, per creare un channel che dovrà "passare" un intero, scriveremo:
 
 ```go
 c := make(chan int)
 ```
 
-The type of this channel is `chan int`. Therefore, to pass this channel to a function, our signature looks like:
+Questo channel è di tipo `chan int`. Per passarlo ad una funzione, la sintassi è:
 
 ```go
 func worker(c chan int) { ... }
 ```
 
-Channels support two operations: receiving and sending. We send to a channel by doing:
+Come puoi immaginare, i channel supportano due operazioni: l'invio...
 
 ```
-CHANNEL <- DATA
+CHANNEL <- DATO
 ```
 
-and receive from one by doing
+... e la ricezione.
 
 ```
 VAR := <-CHANNEL
 ```
 
-The arrow points in the direction that data flows. When sending, the data flows into the channel. When receiving, the data flows out of the channel.
+La freccia, come puoi notare, punta nella direzione in cui il dato procede.
 
-The final thing to know before we look at our first example is that receiving and sending to and from a channel is blocking. That is, when we receive from a channel, execution of the goroutine won't continue until data is available. Similarly, when we send to a channel, execution won't continue until the data is received.
+Un'ultima cosa prima di buttarci nel primo esempio pratico: ricevere ed inviare ad un canale è un'operazione bloccante. Quando riceviamo da un canale, l'esecuzione della goroutine non continua fin quando il dato non è disponibile. Allo stesso modo funziona l'invio: se il dato non viene ricevuto, l'esecuzione non prosegue.
 
-Consider a system with incoming data that we want to handle in separate goroutines. This is a common requirement. If we did our data-intensive processing on the goroutine which accepts the incoming data, we'd risk timing out clients. First, we'll write our worker. This could be a simple function, but I'll make it part of a structure since we haven't seen goroutines used like this before:
+Consideriamo ora un sistema con dei dati in ingresso che vogliamo gestire in goroutine separate: una necessità abbastanza comune. Eseguire tutto su una singola goroutine significherebbe mandare in timeout i client e non è quello che vogliamo. Per prima cosa, quindi, scriveremo il nostro worker. Una semplice funzione che renderò parte di una struttura.
 
 ```go
 type Worker struct {
@@ -1784,9 +1784,9 @@ func (w Worker) process(c chan int) {
 }
 ```
 
-Our worker is simple. It waits until data is available then "processes" it. Dutifully, it does this in a loop, forever waiting for more data to process.
+Il nostro worker, come vedi, è semplice. Aspetta che un certo dato sia disponibile, quindi lo "processa". Come vedi, l'operazione viene ripetuta all'infinito: significa che appena ci saranno dati disponibili questi verranno processati.
 
-To use this, the first thing we'd do is start some workers:
+Ci siamo: creiamo ed avviamo alcuni worker.
 
 ```go
 c := make(chan int)
@@ -1796,7 +1796,7 @@ for i := 0; i < 5; i++ {
 }
 ```
 
-And then we can give them some work:
+Dopodiché... beh, diamo loro del lavoro da fare.
 
 ```go
 for {
@@ -1805,7 +1805,7 @@ for {
 }
 ```
 
-Here's the complete code to make it run:
+Ecco qui di seguito il codice completo.
 
 ```go
 package main
@@ -1841,13 +1841,11 @@ func (w *Worker) process(c chan int) {
 }
 ```
 
-We don't know which worker is going to get what data. What we do know, what Go guarantees, is that the data we send to a channel will only be received by a single receiver.
+Non sappiamo quale worker si prenderà un certo dato. Quello che sappiamo (e che Go garantisce) è che il dato mandato ad un channel verrà ricevuto da un singolo ricevitore. Non di più. Se ci fai caso, l'unico "stato" effettivamente condiviso è il channel, che può ricevere e mandare in modo concorrente senza problemi.
 
-Notice that the only shared state is the channel, which we can safely receive from and send to concurrently. Channels provide all of the synchronization code we need and also ensure that, at any given time, only one goroutine has access to a specific piece of data.
+### Buffered Channel
 
-### Buffered Channels
-
-Given the above code, what happens if we have more data coming in than we can handle? You can simulate this by changing the worker to sleep after it has received data:
+Nell'esempio visto poco fa, davamo "in pasto" al nostro channel un intero ogni cinquanta millisecondi. Tutto regolare, ma... se arrivassero più dati di quanti possano essere gestiti? Facciamo un esperimento, cambiando il codice del worker come segue:
 
 ```go
 for {
@@ -1857,17 +1855,19 @@ for {
 }
 ```
 
-What's happening is that our main code, the one that accepts the user's incoming data (which we just simulated with a random number generator) is blocking as it sends to the channel because no receiver is available.
+Piano piano, i dati vengono rimandati indietro, al channel. Non c'è più nessun ricevitore disponibile!
 
-In cases where you need high guarantees that the data is being processed, you probably will want to start blocking the client. In other cases, you might be willing to loosen those guarantees. There are a few popular strategies to do this. The first is to buffer the data. If no worker is available, we want to temporarily store the data in some sort of queue. Channels have this buffering capability built-in. When we created our channel with `make`, we can give our channel a length:
+Serve una soluzione: ce ne sono varie e quella più popolare è creare un buffer per questi dati.
+
+Se nessun worker è disponibile, memorizziamo i dati in arrivo in una specie di "coda". In Go, i channel hanno questa capacità di default: non dobbiamo fare altro che specificare la lunghezza di questa coda come segue.
 
 ```go
 c := make(chan int, 100)
 ```
 
-You can make this change, but you'll notice that the processing is still choppy. Buffered channels don't add more capacity; they merely provide a queue for pending work and a good way to deal with a sudden spike. In our example, we're continuously pushing more data than our workers can handle.
+Facendo questa modifica inizierai a risolvere il problema. Tuttavia, l'esecuzione non è comunque ottimale. I buffered channel non aggiungono una maggiore capacità: creano soltanto un "cuscinetto" per ammortizzare dei picchi particolarmente fastidiosi. Il nostro esempio funziona, invece, in maniera diversa: mettiamo continuamente dati nel channel, troppi per i nostri worker.
 
-Nevertheless, we can get a sense that the buffered channel is, in fact, buffering by looking at the channel's `len`:
+Prova a modificare come segue il codice del ciclo:
 
 ```go
 for {
@@ -1877,44 +1877,45 @@ for {
 }
 ```
 
-You can see that it grows and grows until it fills up, at which point sending to our channel start to block again.
+Noterai tu stesso che, dopo un'accelerazione iniziale, i dati inizieranno ad essere rimessi puntualmente nel channel.
 
 ### Select
 
-Even with buffering, there comes a point where we need to start dropping messages. We can't use up an infinite amount of memory hoping a worker frees up. For this, we use Go's `select`.
+Insomma, anche con il buffering prima o poi la coda si riempie, ed inizierai a scartare messaggi. Non possiamo mettere a disposizione una quantità infinita di memoria per gestire ogni situazione! In nostro soccorso ci viene in aiuto il `select`.
 
-Syntactically, `select` looks a bit like a switch. With it, we can provide code for when the channel isn't available to send to. First, let's remove our channel's buffering so that we can clearly see how `select` works:
+A livello sintattico, il `select` assomiglia molto ad uno switch. Permette di specificare del codice da eseguire quando il channel non è disponibile.
+
+Per prima cosa, però, rimuoviamo il buffering dal nostro channel, in modo tale da avere un esempio più pulito.
 
 ```go
 c := make(chan int)
 ```
 
-Next, we change our `for` loop:
+Bene: ora cambiamo il loop `for` visto prima.
 
 ```go
 for {
   select {
   case c <- rand.Int():
-    //optional code here
+    // codice opzionale
   default:
-    //this can be left empty to silently drop the data
+    // questa parte può essere lasciata vuota
+    // se si vuole scartare "silenziosamente" il dato
     fmt.Println("dropped")
   }
   time.Sleep(time.Millisecond * 50)
 }
 ```
 
-We're pushing out 20 messages per second, but our workers can only handle 10 per second; thus, half the messages get dropped.
+Facendo un rapido calcolo, la situazione è la seguente: inseriamo nel channel 20 messaggi al secondo. I nostri worker ne possono gestire 10 al secondo. La metà dei messaggi viene quindi scartata.
 
-This is only the start of what we can accomplish with `select`. A main purpose of select is to manage multiple channels. Given multiple channels, `select` will block until the first one becomes available. If no channel is available, `default` is executed if one is provided. A channel is randomly picked when multiple are available.
-
-It's hard to come up with a simple example that demonstrates this behavior as it's a fairly advanced feature. The next section might help illustrate this though.
+L'esecuzione ora è più fluida, ma il problema rimane. Chiaramente questo è solo un assaggio di quello che puoi fare con `select`: il suo scopo è soprattutto gestire più di un canale per volta. Ad esempio, con `select` potremmo specificare più `case` con più canali. Se nessuno di questi canali è disponibile, allora viene eseguito il codice in `default`.
 
 ### Timeout
 
-We've looked at buffering messages as well as simply dropping them. Another popular option is to timeout. We're willing to block for some time, but not forever. This is also something easy to achieve in Go. Admittedly, the syntax might be hard to follow but it's such a neat and useful feature that I couldn't leave it out.
+Un'altra possibilità, se si vuole scongiurare il problema del lock, è adottare un timeout. In questo modo il blocco è tale soltanto per un certo periodo di tempo e non all'infinito.
 
-To block for a maximum amount of time, we can use the `time.After` function. Let's look at it then try to peek beyond the magic. To use this, our sender becomes:
+Per specificare un timeout possiamo usare la funzione `time.After`. Vediamone un uso pratico riprendendo il nostro esempio.
 
 ```go
 for {
@@ -1927,7 +1928,7 @@ for {
 }
 ```
 
-`time.After` returns a channel, so we can `select` from it. The channel is written to after the specified time expires. That's it. There's nothing more magical than that. If you're curious, here's what an implementation of `after` could look like:
+La funzione `time.After` ritorna un channel. Possiamo quindi inserirlo come case nella `select`. Il canale in questione accetta un'altra scrittura solo dopo i 100 millisecondi. Per capirci meglio, ecco come potrebbe apparire un'implementazione di `After`:
 
 ```go
 func after(d time.Duration) chan bool {
@@ -1940,23 +1941,25 @@ func after(d time.Duration) chan bool {
 }
 ```
 
-Back to our `select`, there are a couple of things to play with. First, what happens if you add the `default` case back? Can you guess? Try it. If you aren't sure what's going on, remember that `default` fires immediately if no channel is available.
+Ok, torniamo alla `select` adesso. Ci sono ancora un paio di cose che vale la pena farti notare, prima di concludere.
 
-Also, `time.After` is a channel of type `chan time.Time`. In the above example, we simply discard the value that was sent to the channel. If you want though, you can receive it:
+Innanzitutto, cosa succede se non specifichiamo un `default`? Prova tu stesso: ricorda che il `default` serve a chiarire cosa fare se non ci sono channel disponibili.
+
+Inoltre, `time.After` ritorna un channel di tipo `chan time.Time`. Nell'esempio qui sopra scartiamo il valore che è stato mandato ma... se volessimo riceverlo?
 
 ```go
 case t := <-time.After(time.Millisecond * 100):
   fmt.Println("timed out at", t)
 ```
 
-Pay close attention to our `select`. Notice that we're sending to `c` but receiving from `time.After`. `select` works the same regardless of whether we're receiving from, sending to, or any combination of channels:
+Attenzione quindi alle nostre `select`. Fai caso al fatto che si, stiamo inviando a `c` ma stiamo ricevendo da `time.After`. Volendo fare un piccolo riassunto, ecco come funziona una `select`:
 
-* The first available channel is chosen.
-* If multiple channels are available, one is randomly picked.
-* If no channel is available, the default case is executed.
-* If there's no default, select blocks.
+* viene scelto il primo channel disponibile;
+* se più di un channel è disponibile, allora viene scelto casualmente;
+* se non ci sono channel disponibili, il caso `default` viene scelto;
+* se non c'è un `default`, la `select` diventa bloccante;
 
-Finally, it's common to see a `select` inside a `for`. Consider:
+Sappi che è abbastanza comune vedere una `select` dentro un `for`.
 
 ```go
 for {
@@ -1970,22 +1973,22 @@ for {
 }
 ```
 
-## Before You Continue
+## Prima di Proseguire
 
-If you're new to the world of concurrent programming, it might all seem rather overwhelming. It categorically demands considerably more attention and care. Go aims to make it easier.
+Se sei nuovo al mondo della programmazione concorrente, tutto questo ti sembrerà "troppo". Non temere, è normale: è un argomento che richiede pratica, studio e cura. Go, nel suo piccolo, cerca di renderlo più digeribile.
 
-Goroutines effectively abstract what's needed to run concurrent code. Channels help eliminate some serious bugs that can happen when data is shared by eliminating the sharing of data. This doesn't just eliminate bugs, but it changes how one approaches concurrent programming. You start to think about concurrency with respect to message passing, rather than dangerous areas of code.
+Le goroutine cercano di astrarre tutto quello che serve per eseguire del codice concorrente, mentre i channel aiutano ad eliminare alcuni bug fastidiosi che possono sbucare quando abbiamo bisogno di condividere dei dati tra più goroutine. Chiaramente, usare questi strumenti non eliminerà tutti i possibili bug: non succede mai. Ricordatelo. Aiuta, però, pensare al cambio di approccio: dal "codice pericoloso" ad un insieme di messaggi che vengono mandati da una goroutine all'altra.
 
-Having said that, I still make extensive use of the various synchronization primitives found in the `sync` and `sync/atomic` packages. I think it's important to be comfortable with both. I encourage you to first focus on channels, but when you see a simple example that needs a short-lived lock, consider using a mutex or read-write mutex.
+Detto questo, non scordiamoci che le primitive come quelle presenti nel package `sync` (come il Mutex) non sono il male. A volte ti serviranno e ne farai buon uso. Ne sono certo.
 
-# Conclusion
+# Conclusioni
 
-I recently heard Go described as a *boring* language. Boring because it's easy to learn, easy to write and, most importantly, easy to read. Perhaps, I did this reality a disservice. We *did* spend three chapters talking about types and how to declare variables after all.
+Recentemente ho sentito descrivere Go come un linguaggio *noioso*. Noioso perché tutto sommato semplice da imparare, da scrivere e, soprattutto, da leggere. Se però ci fai caso, ho usato tre capitoli per spiegare i tipi, come funzionano, come dichiarare le variabili e tutto il resto.
 
-If you have a background in a statically typed language, much of what we saw was probably, at best, a refresher. That Go makes pointers visible and that slices are thin wrappers around arrays probably isn't overwhelming to seasoned Java or C# developers.
+Se vieni dai linguaggi a tipizzazione statica non credo tu abbia avuto problemi. Per te sarà stato, al massimo, una rinfrescata di alcuni concetti che già conoscevi. Puntatori, slice e così via.
 
-If you've mostly been making use of dynamic languages, you might feel a little different. It *is* a fair bit to learn. Not least of which is the various syntax around declaration and initialization. Despite being a fan of Go, I find that for all the progress towards simplicity, there's something less than simple about it. Still, it comes down to some basic rules (like you can only declare variable once and `:=` does declare the variable) and fundamental understanding (like `new(X)` or `&X{}` only allocate memory, but slices, maps and channels require more initialization and thus, `make`).
+Se invece vieni dal mondo dei linguaggi dinamici, probabilmente in questo piccolo libro di cose da imparare ne hai viste abbastanza. Senza contare tutta la parte relativa alla sintassi per l'inizializzazione e dichiarazione. Comprendere le cose fondamentali, come l'allocazione della memoria, è importantissimo.
 
-Beyond this, Go gives us a simple but effective way to organize our code. Interfaces, return-based error handling, `defer` for resource management and a simple way to achieve composition.
+Oltre questo però Go ci aiuta ad organizzare, in modo semplice, il nostro codice. Attraverso le interfacce, la gestione degli errori come valori di ritorno e quel `defer` per la gestione delle risorse.
 
-Last but not least is the built-in support for concurrency. There's little to say about goroutines other than they’re effective and simple (simple to use anyway). It's a good abstraction. Channels are more complicated. I always think it's important to understand basics before using high-level wrappers. I *do* think learning about concurrent programming without channels is useful. Still, channels are implemented in a way that, to me, doesn't feel quite like a simple abstraction. They are almost their own fundamental building block. I say this because they change how you write and think about concurrent programming. Given how hard concurrent programming can be, that is definitely a good thing.
+Infine, non scordiamoci il supporto built-in per la concorrenza. Ci sono le goroutine, essenziali ma che fanno bene il loro lavoro. Poi abbiamo i channel, più complessi. Senza contare le basi, come il mutex visto in precedenza. A tal proposito, trovo sia fondamentale conoscere le basi prima di arrivare ai wrapper di alto livello. Una volta imparate ad usare bene tutte queste strutture, tutte queste astrazioni, capisci che sono a tutti gli effetti il fondamento per qualcosa di diverso. Lo dico perché cambiano, in un certo senso, il modo in cui scrivi e pensi al tuo codice quando fai programmazione concorrente. E visto e considerato quanto possa essere difficile la programmazione concorrente... beh, non è poi così male no?
