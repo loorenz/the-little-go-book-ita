@@ -95,7 +95,7 @@ Una volta fatto tutto, apri un prompt e digita `go version`. Se è andato tutto 
 
 # Capitolo 1 - Le Basi
 
-Go è un linguaggio compilato e basato su tipizzazione statica, che presenta una sintassi che ricorda il C. Gestisce autonomamente, inoltre, la garbage collection. Bello tutto, ma che significa?
+Go è un linguaggio compilato e basato su tipizzazione statica. Presenta una sintassi che ricorda il C e gestisce autonomamente la garbage collection. Bello tutto, ma che significa?
 
 ## Compilazione
 
@@ -107,13 +107,13 @@ C'è da dire che i programmi scritti in linguaggi poi compilati tendono ad esser
 
 ## Static Typing
 
-Per "static typing" o "tipizzazione statica" si intende un concetto molto semplice: ogni variabile deve avere un tipo ben specifico (int, string, bool e così via). Questa specifica avviene in due modi: dichiarando esplicitamente il tipo della variabile o, a volte, lasciando questo compito al compilatore. Vedremo a breve alcuni esempi.
+Per "static typing" o "tipizzazione statica" si intende un concetto molto semplice: ogni variabile deve avere un tipo ben specifico (`int`, `string`, `bool` e così via). La cosa avviene in due modi: dichiarando esplicitamente il tipo della variabile o, a volte, lasciando questo compito al compilatore. Vedremo a breve alcuni esempi.
 
-C'è molto da dire sullo static typing: sono convinto però che sia ancora più comprensibile guardando il codice. Se sei abituato a lavorare con linguaggi dalla tipizzazione dinamica, all'inizio troverai il tutto un po' poco agevole. Non hai torto ma, come ho già detto, ci sono dei vantaggi. Specialmente quando il linguaggio è compilato.
+C'è molto da dire sullo static typing: sono convinto però che sia ancora più comprensibile guardando il codice. Se sei abituato a lavorare con linguaggi dalla tipizzazione dinamica, all'inizio troverai il tutto un po' poco agevole, quasi burocratico. Non hai torto ma, come ho già detto, ci sono dei vantaggi. Specialmente quando il linguaggio è compilato.
 
 ## Sintassi C-Like
 
-Dire che un linguaggio ha una sintassi C-Like (in italiano "simile al C") significa che se hai già lavorato con C, C++, Java, JavaScript o C#, molto probabilmente troverai Go familiare. Almeno per quanto riguarda la sintassi: `&&` è effettivamente un AND booleano, `==` viene invece usato per le uguaglianze, le `{` parentesi `}` vengono usate per creare degli scope e così via.
+Dire che un linguaggio ha una sintassi C-Like (in italiano "simile al C") significa che se hai già lavorato con C, C++, Java, JavaScript o C#, molto probabilmente troverai Go familiare. Almeno per quanto riguarda la sintassi: ad esempio `&&` è effettivamente un AND booleano, `==` viene invece usato per le uguaglianze e le `{` parentesi `}` vengono usate per creare degli scope.
 
 I linguaggi C-Like inoltre presentano, in genere, il punto e virgola a fine linea e le parentesi per delimitare le condizioni. In questo caso, Go non ne fa uso, anche se le parentesi possono essere comunque usate per gestire le precedenze nei controlli. Ecco un esempio:
 
@@ -123,7 +123,7 @@ if name == "Leto" {
 }
 ```
 
-Questo è un caso semplice, le parentesi non servono. Qui, invece...
+Nel caso semplice qui sopra le parentesi non servono. Qui di seguito invece...
 
 ```go
 if (name == "Goku" && power > 9000) || (name == "gohan" && power < 4000)  {
@@ -133,11 +133,9 @@ if (name == "Goku" && power > 9000) || (name == "gohan" && power < 4000)  {
 
 ... le parentesi sono effettivamente molto utili perché ci permettono di gestire l'ordine dei controlli.
 
-Sia chiaro: Go è molto più vicino al C che al Java. Non solo in termini di sintassi ma proprio in termini di scopo.
-
 ## Garbage Collection
 
-Alcune variabili, una volta create, hanno un ciclo di vita facilmente individuabile. Una variabile locale in una funzione, ad esempio, cessa di esistere nel momento in cui la funzione è stata eseguita. In altri casi, tuttavia, questo ciclo non è così ovvio... almeno per il compilatore. Pensiamo ad una variabile il cui valore viene ritornato da una funzione, o ad una reference ad un'altra variabile. In situazioni del genere può essere indubbiamente più difficile definire a priori un ciclo di vita. Senza la garbage collection, il compito di "eliminare" la variabile ad un certo punto spetta allo sviluppatore.
+Alcune variabili, una volta create, hanno un ciclo di vita facilmente individuabile. Una variabile locale di una funzione, ad esempio, cessa di esistere nel momento in cui la funzione è stata eseguita. In altri casi, tuttavia, questo ciclo non è così ovvio... almeno per il compilatore. Pensiamo ad una variabile il cui valore viene ritornato da una funzione, o ad una reference ad un'altra variabile. In situazioni del genere può essere indubbiamente più difficile definire a priori un ciclo di vita. Senza la garbage collection, il compito di "eliminare" la variabile ad un certo punto spetta allo sviluppatore.
 
 Come? In C, ad esempio, devi letteralmente chiamare una funzione `free(str);` su quella variabile.
 
@@ -145,7 +143,7 @@ I linguaggi con garbage collection però, come Ruby, Python, Javascript, C# ed o
 
 ## Il Nostro Primo Programma Go
 
-Ok, basta parlare, è arrivato il momento di eseguire scrivere, compilare ed eseguire il nostro primo programma! Apriamo il nostro editor di testo preferito e riportiamo questo codice:
+Ok, basta parlare, è arrivato il momento di scrivere, compilare ed eseguire il nostro primo programma! Apriamo il nostro editor di testo preferito e riportiamo questo codice:
 
 ```go
 package main
@@ -155,11 +153,9 @@ func main() {
 }
 ```
 
-Salviamo il file come `main.go`. Per ora salvalo dove vuoi: al momento non c'è bisogno di lavorare dentro il workspace Go.
+Salviamo il file come `main.go`. Per ora salvalo dove vuoi: non c'è bisogno di lavorare dentro il workspace Go.
 
-Apri quindi una shell/prompt nella directory in cui hai salvato il file. Nel mio caso, `cd ~/code`.
-
-Esegui quindi il programma con:
+Apri quindi una shell/prompt nella directory in cui hai salvato il file. Nel mio caso, `cd ~/code`. Esegui il programma con:
 
 ```
 go run main.go
@@ -167,7 +163,7 @@ go run main.go
 
 Se tutto è andato a dovere, dovresti leggere *it's over 9000!*.
 
-Ok, adesso fermi tutti: che significa tutto questo? Abbiamo compilato il nostro codice oppure no? Facciamo un po' di chiarezza. Innanzitutto, `go run` è un comando molto utile che innanzitutto compila il nostro codice *e* poi lo esegue. Usa una cartella temporanea per effettuare tutte le operazioni, dopodiché esegue il nostro codice ed infine pulisce tutto.
+Ok, adesso fermi tutti: che significa tutto questo? Abbiamo compilato il nostro codice oppure no? Facciamo un po' di chiarezza. Innanzitutto, `go run` è un comando molto utile che compila il nostro codice *e poi* lo esegue. Usa una cartella temporanea per effettuare tutte le operazioni, dopodiché esegue il nostro codice ed infine pulisce tutto. A tutti gli effetti, quindi, la compilazione c'è.
 
 Aggiungendo l'opzione `--work` al comando run puoi vedere quale cartella verrà usata.
 
@@ -183,11 +179,11 @@ go build main.go
 
 L'esecuzione di questo comando genererà un eseguibile `main`, pronto ad essere usato. Non scordare, se sei su Linux/OSX, di aggiungere il prefisso `./` all'eseguibile (`./main`).
 
-L'idea alla base di tutto quello che vedi è semplice: in fase di sviluppo, usare al volo `go run` è molto utile. Al momento del deploy, però, dovrai usare `go build` e poi eseguire il compilato.
+L'idea alla base di tutto quello che vedi è semplice: in fase di sviluppo, usare al volo `go run` è molto utile. Al momento del deploy, però, dovrai usare `go build` e poi eseguire il programma.
 
 ### Main
 
-Immagino che il codice del nostro primo programma sia abbastanza comprensibile: tutto quello che abbiamo fatto è stato creare una funzione e stampare una stringa con la funzione `printLn`. Come puoi facilmente immaginare, `go run` ha eseguito esattamente quella funzione perché, in Go, il punto di ingresso di un'applicazione è la funzione `main` in un package `main`. Semplice!
+Immagino che il codice del nostro primo programma sia abbastanza comprensibile: tutto quello che abbiamo fatto è stato creare una funzione e stampare una stringa con la funzione `printLn`. Come puoi facilmente immaginare, `go run` ha eseguito esattamente quella funzione perché, in Go, il punto di ingresso di un'applicazione è la funzione `main` in un package `main`. Semplice no?
 
 Parleremo più avanti dei package: per ora, scriveremo il nostro codice sempre in un package `main` per concentrarci sulle basi del linguaggio.
 
@@ -225,9 +221,9 @@ go run main.go 9000
 
 Adesso, il nostro programma usa due package della standard library: `fmt` ed `os`. Abbiamo introdotto anche un'altra funzione built-in, `len`, che si occupa di ritornare, in questo caso, il numero di elementi in un array.
 
-Avrai inoltre notato la notazione `fmt.Println` per chiamare la funzione `Println`: è differente rispetto a ciò che puoi vedere in altri linguaggi. Ne parleremo, tuttavia, in un secondo momento.
+Avrai inoltre notato la notazione `fmt.Println` per chiamare la funzione `Println`: è leggermente differente rispetto a ciò che puoi vedere in altri linguaggi. Ne parleremo, tuttavia, in un secondo momento.
 
-Una cosa molto interessante da sapere è che Go è molto rigido per quello che riguarda l'import di package. Se un package non viene usato ma ne è specificato l'import, la compilazione non andrà mai a buon fine. Non ci credi? Prova ad eseguire questo codice:
+Una cosa molto interessante da sapere è che Go è molto rigido per quello che riguarda l'import di package. Se un package non viene usato ma ne è specificato l'import, la compilazione non va a buon fine. Non ci credi? Prova ad eseguire questo codice:
 
 ```go
 package main
@@ -241,7 +237,7 @@ func main() {
 }
 ```
 
-Otterrai due errori riguardanti `fmt` ed `os`, appunto. Noioso? Si, vero. Nel tempo però imparerai ad apprezzarlo: importare qualcosa che non ti serve infatti aumenterebbe il tempo di compilazione.
+Otterrai due errori riguardanti `fmt` ed `os`, appunto. Noioso? Si, vero. Nel tempo però imparerai ad apprezzarlo: importare qualcosa che non ti serve infatti aumenta il tempo di compilazione.
 
 Detto questo, apro una piccola parentesi per farti notare una cosa davvero interessante. Come puoi vedere tu stesso, la documentazione della standard library fa il suo lavoro egregiamente. Guarda qui, ad esempio: <https://golang.org/pkg/fmt/#Println>. Si tratta della reference relativa alla funzione `Println` che abbiamo usato.
 
@@ -251,7 +247,7 @@ Ecco la cosa interessante: sei in viaggio, non hai accesso ad internet ma hai bi
 godoc -http=:6060
 ```
 
-Questo comando metterà su al volo un server contenente la stessa identica documentazione. Non dovrai fare altro che puntare il tuo browser verso `http://localhost:6060`.
+Questo comando mette su al volo un server contenente la stessa identica documentazione. Non devi fare altro che puntare il tuo browser verso `http://localhost:6060`.
 
 ## Le Variabili
 
@@ -306,8 +302,6 @@ func main() {
   power := 9000
   fmt.Printf("It's over %d\n", power)
 
-  // COMPILER ERROR:
-  // no new variables on left side of :=
   power := 9001
   fmt.Printf("It's also over %d\n", power)
 }
@@ -336,7 +330,7 @@ func main() {
 }
 ```
 
-Un po' come succede per gli import, inoltre, Go non ti permette di compilare il tuo programma se hai variabili non usate. Questo esempio:
+Un po' come succede per gli import, inoltre, Go non ti permette di compilare il tuo programma se hai variabili che poi non vengono usate. Questo esempio:
 
 ```go
 func main() {
@@ -345,12 +339,12 @@ func main() {
 }
 ```
 
-non verrà compilato perché `name` è stata dichiarata ma non usata. Anche in questo caso, all'inizio sarà un po' frustrante... ma nel lungo periodo ti aiuterà a tenere il codice pulito e leggibile.
+non viene compilato perché `name` è stata dichiarata ma non usata. Anche in questo caso, all'inizio sarà un po' frustrante... ma nel lungo periodo ti aiuterà a tenere il codice pulito e leggibile.
 
 C'è tanto da sapere riguardo le variabili ed il loro assegnamento. Per ora, ricordiamoci queste semplici regole:
 
 * se usiamo `var NAME TYPE` le dichiariamo e assegnamo loro il valore di default;
-* se usiamo `NAME := VALUE` le dichiariamo e assegnamo loro il valore VALUE. Il tipo verrà "capito" automaticamente;
+* se usiamo `NAME := VALUE` le dichiariamo e assegnamo loro il valore VALUE. Il tipo verrà "capito" automaticamente dal compilatore;
 
 ## Le Funzioni
 
@@ -367,12 +361,12 @@ func power(name string) (int, bool) {
 }
 ```
 
-Ecco un esempio d'uso della terza:
+Come si fa ad usare una funzione che ritorna due valori? Ecco un esempio d'uso:
 
 ```go
 value, exists := power("goku")
 if exists == false {
-  // handle this error case
+  // qui gestiamo un eventuale errore...
 }
 ```
 
@@ -395,13 +389,13 @@ func add(a, b int) int {
 }
 ```
 
-Adesso tutto questo, forse, ti dice poco. In futuro però troverai molto utile avere funzioni che ritornano più valori. Troverai altrettanto utile poter scartare un certo valore ritornato con `_`. Per ora, comunque, è tutto.
+Adesso tutto questo, forse, ti dice poco. In futuro però troverai molto utile avere funzioni che ritornano più valori. Troverai altrettanto utile poter scartare un certo valore ritornato con `_`.
 
 ## Prima di Proseguire
 
 Molto probabilmente, in questo momento stai pensando di vedere tanti piccoli "pezzettini" di questo linguaggio. Pezzettini che non ancora compongono un'immagine ben definita. Nessun problema: è normale, soprattutto adesso.
 
-Se vieni da un linguaggio dinamico, alcune cose ti sembreranno noise. Controintuitive. Se vieni da linguaggi a tipizzazione statica, invece, dovresti trovarti a tuo agio. Un po' alla volta, però, sono sicuro apprezzerai in ogni caso la pulizia verso la quale sarai portato.
+Se vieni da un linguaggio dinamico, alcune cose ti sembreranno noiose, quasi controintuitive. Se vieni da linguaggi a tipizzazione statica, invece, dovresti trovarti a tuo agio. Un po' alla volta, però, sono sicuro apprezzerai in ogni caso la pulizia verso la quale sarai portato.
 
 # Capitolo 2 - Strutture
 
