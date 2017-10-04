@@ -1,4 +1,4 @@
-# Su Questo Libro
+# A Proposito di Questo Libro
 
 ## Licenza
 
@@ -15,21 +15,24 @@ Puoi vedere il testo completo della licenza qui:
 Puoi trovare l'ultima versione di questo libro qui:
 <https://github.com/karlseguin/the-little-go-book>
 
+Questa è la traduzione in Italiano, di Francesco Malatesta. Puoi trovarla qui:
+<https://github.com/francescomalatesta/the-little-go-book>
+
 # Introduzione
 
-Ho sempre avuto un rapporto di odio-amore con l'idea di imparare un nuovo linguaggio. Da una parte, infatti, i linguaggi sono fondamentali per il nostro lavoro: le più piccole modifiche possono avere un impatto notevolissimo. Esatto, quel momento *aha* che ha un effetto particolare su di noi e va a ridefinire le aspettative che abbiamo nei confronti di quel linguaggio. Dall'altra parte, però, il design di un linguaggio è qualcosa di "incrementale". Impari nuove parole chiave, tipi, per poi passare al coding style e via, verso le librerie, community, paradigmi. Andando a "pesare" tutto questo l'idea potrebbe non far impazzire.
+Ho sempre avuto un rapporto di amore/odio con l'idea di imparare un nuovo linguaggio. Da una parte, infatti, i linguaggi sono fondamentali per il nostro lavoro: studiarli in un crto modo ha un impatto notevolissimo. Hai presente quel momento *aha!* che va a ridefinire le aspettative che abbiamo nei confronti di quel linguaggio? Ecco. Dall'altra parte, però, il design di un linguaggio è qualcosa di "incrementale". Impari nuove parole chiave, tipi, per poi passare al coding style e via, verso le librerie, community, paradigmi. A volte ci chiediamo se ne valga la pena davvero.
 
-Beh, la verità è che *dobbiamo* andare avanti. A voler essere più precisi, dovremmo sempre essere tutto sommato contenti di imparare qualcosa di nuovo: d'altronde, i linguaggi sono il fondamento di quello che facciamo. Piano piano, un passo alla volta, possiamo fare nostre tutte quelle nozioni che nel tempo hanno un impatto sempre più ampio: leggibilità, performance, testabilità, gestione delle dipendenze, documentazione, profiling e così via.
+Beh, la verità è che *dobbiamo* andare avanti. A voler essere più precisi, dovremmo sempre essere tutto sommato contenti di imparare qualcosa di nuovo. Piano piano, un passo alla volta, possiamo fare nostre tutte quelle nozioni che nel tempo hanno un'importanza sempre maggiore: leggibilità, performance, testabilità, gestione delle dipendenze, documentazione, profiling e così via.
 
 Certo una domanda resta: **perché proprio Go?**. Per quanto mi riguarda, le ragioni fondamentali sono due. In primis, perché è un linguaggio relativamente semplice con una altrettanto relativamente semplice standard library. La "sostanza" alla base di Go è proprio questa: semplificare la complessità vista in molti linguaggi negli ultimi anni. Anche l'altra ragione non è da sottovalutare però: Go sarà un ottimo strumento per completare l'arsenale di un qualsiasi sviluppatore.
 
-Go è stato costruito come linguaggio di sistema (parliamo di sistemi operativi, driver per device e così via) e di conseguenza può essere facilmente "orientato" a tutti gli sviluppatori C e C++. Tuttavia, stando a quello che il team di Go dice, la fetta più grande dell'utenza di Go non è quella dei system developer. Al contrario: sono gli application developer! Come mai? Sembra che tanti, tra coloro che costruiscono siti, servizi web, applicazioni desktop e non solo, si manifesti una necessità sempre più crescente di un certo numero di sistemi che facciano da "cuscinetto" tra il software di alto livello (applicazione) e quello di basso livello (sistema).
+Go è stato costruito come linguaggio di sistema (parliamo di sistemi operativi, driver per device e così via) e di conseguenza può essere facilmente "appetibile" per tutti gli sviluppatori C e C++. Tuttavia, stando a quello che il team di Go riporta, la fetta più grande dell'utenza di Go non è quella dei system developer. Al contrario: è quella degli application developer! Come mai? Sembra che tanti, tra coloro che costruiscono siti, servizi web, applicazioni desktop e non solo, si manifesti una necessità sempre più crescente di un certo numero di sistemi che facciano da "cuscinetto" tra il software di alto livello (applicazione) e quello di basso livello (sistema).
 
-Può essere un sistema di messaging, caching, analisi dei dati intensiva, tool da linea di comando. I sistemi crescono in termini di complessità e di conseguenza aumenta la ricerca di software che "aiuti" l'infrastruttura. Certo, si tratta sempre di cose che possiamo implementare con Python o Ruby ma avere a disposizione un sistema di tipi più rigido e maggiori performance certo non è da sottovalutare. Detto questo, nulla ti vieta di usare Go per costruire siti web. Ci sono molti che lo fanno ma è anche vero che l'espressività di altri linguaggi può essere più adatta allo scopo.
+Può essere un sistema di messaging, caching, analisi dei dati intensiva, tool da linea di comando. I sistemi crescono in termini di complessità e di conseguenza aumenta la ricerca di software che "aiuti" l'infrastruttura. Certo, si tratta sempre di cose che possiamo implementare con Python o Ruby ma avere a disposizione un sistema di tipi più rigido e maggiori performance certo non è da sottovalutare. Detto questo, nulla ti vieta di usare Go per costruire siti web. Ci sono molti che lo fanno ma è anche vero che l'espressività di altri linguaggi può essere più adatta allo scopo. Diamo a Cesare quel che è di Cesare, insomma.
 
 Ad ogni modo, ci sono anche altre aree in cui Go eccelle. Ad esempio, non esiste il concetto di dipendenza nel momento in cui viene eseguito un programma scritto in Go. Non bisogna preoccuparsi di quale JVM è installata, tantomeno quale versione. Anche per questo motivo Go sta diventando sempre più popolare tra tutti quelli che ne fanno uso per costruire tool da linea di comando.
 
-Insomma, Go è indubbiamente un ottimo uso del tuo tempo. Anche perché non dovrai spendere chissà tempo per impararlo ad usare: in poco tempo infatti potrai già implementare un sacco di applicazioni utili e renderti conto da solo del suo potenziale.
+Insomma, Go è indubbiamente un ottimo uso del tuo tempo. Anche perché non dovrai spendere chissà quanto tempo per impararlo ad usare: in poco tempo infatti potrai già implementare un sacco di applicazioni utili e renderti conto da solo del suo potenziale.
 
 ## Una Nota dall'Autore
 
@@ -37,27 +40,27 @@ Prima di scrivere questo libro ho esitato molto. Per varie ragioni. Innanzitutto
 
 Inoltre, devo ammettere di essermi trovato un po' "a disagio" nello scrivere un libro su un linguaggio. Quando ho scritto "The Little MongoDB Book" ho dato per scontate alcune delle nozioni fondamentali da conoscere. Stessa cosa per "The Little Redis Book".
 
-Qui il discorso è diverso: sapevo che non avrei potuto fare le stesse assunzioni. Insomma, come fare per capire quanto tempo spendere per parlare delle interfacce in Go sapendo che per alcuni l'argomento è nuovo, ma per altri basta un *Go ha le interfacce*?
+Qui il discorso è diverso: sapevo che non avrei potuto fare le stesse assunzioni. Insomma, come fare per capire quanto tempo spendere per parlare delle interfacce in Go sapendo che per alcuni l'argomento è nuovo, ma per altri basta un *"Go ha le interfacce"*?
 
-Arrivo alla mia richiesta: se qualche passaggio dovesse sembrarti più oscuro del previsto, fammelo presente! Vedilo un po' come il prezzo di questo libro, dai.
+Detto questo, se qualche passaggio dovesse sembrarti più oscuro del previsto, fammelo presente! Te ne sarei davvero grato.
 
 # I Primi Passi
 
-Se vuoi iniziare a "giocare" un po' con Go potresti dare un'occhiata al [Go Playground](https://play.golang.org/), tool che ti permette di eseguire codice online senza dover installare nulla sulla tua macchina. Tra l'altro, il Go Playground viene spesso usato quando si chiede aiuto nei forum come [questo qui](https://groups.google.com/forum/#!forum/golang-nuts), o in posti come StackOverflow.
+Se vuoi iniziare a "giocare" un po' con Go puoi dare un'occhiata al [Go Playground](https://play.golang.org/), un tool che ti permette di eseguire codice online senza dover installare nulla sulla tua macchina. Tra l'altro, il Go Playground viene spesso usato quando si chiede aiuto nei forum come [questo qui](https://groups.google.com/forum/#!forum/golang-nuts), o in posti come StackOverflow.
 
 Installare Go, comunque, è piuttosto semplice. Puoi farlo partendo dai sorgenti ovviamente, anche se è molto più comodo usare i binari pre-compilati. Basta dare uno sguardo alla [pagina dei download](https://golang.org/dl/) sul sito ufficiale e trovare quello per la tua piattaforma.
 
-Ora, se escludiamo alcuni esempi basilari, Go è stato progettato per "lavorare" nel momento in cui il tuo codice si trova in quello che viene definito "workspace". In poche parole, parliamo di una cartella al cui interno trovi altre cartelle `bin`, `pkg` ed `src`. Occhio, perché potresti essere tentato di impostare un progetto seguendo il tuo gusto personale. Non farlo: non è questo il caso.
+Ora, se escludiamo alcuni esempi basilari, Go è stato progettato per "lavorare" nel momento in cui il tuo codice si trova in quello che viene definito "workspace". In poche parole, parliamo di una cartella al cui interno trovi altre cartelle `bin`, `pkg` ed `src`. Occhio, perché potresti essere tentato di impostare un progetto seguendo il tuo gusto personale. Non farlo: non è questo il caso. Go ha un modo tutto suo di gestire l'organizzazione del codice che inizialmente potrebbe farti storcere il naso.
 
 Tendenzialmente, io metto tutto il mio codice in `~/code`. Di conseguenza, `~/code/blog` conterrà il mio blog. Per Go, il mio workspace è `~/code/go` ed il mio blog in Go si troverà in `~/code/go/src/blog`.
 
-Per capirci: crea una cartella `go` con una sottocartella `src` al suo interno dove pensi metterai il tuo codice.
+Per capirci: crea una cartella `go` con una sottocartella `src` al suo interno dove pensi metterai il tuo codice delle tue applicazioni Go.
 
-Vediamo ora come installare Go su OSX / Linux e Windows.
+Vediamo, ora, come installare Go su OSX / Linux e Windows.
 
 ## OSX / Linux
 
-Scarica il file `tar.gz` per la tua piattaforma. Per OSX probabilmente ti intereserà `go#.#.#.darwin-amd64-osx10.8.tar.gz`, dove `#.#.#` è l'ultima versione di Go.
+Scarica il file `tar.gz` per la tua piattaforma. Per OSX probabilmente ti interesserà `go#.#.#.darwin-amd64-osx10.8.tar.gz`, dove `#.#.#` è l'ultima versione di Go.
 
 Estrai tutto in `/usr/local` tramite `tar -C /usr/local -xzf go#.#.#.darwin-amd64-osx10.8.tar.gz`.
 
@@ -71,7 +74,7 @@ Puoi fare tutto questo da shell, con due `echo`.
     echo 'export GOPATH=$HOME/code/go' >> $HOME/.profile
     echo 'export PATH=$PATH:/usr/local/go/bin' >> $HOME/.profile
 
-Per "attivare" queste variabili riavvia la shell, o esegui `source $HOME/.profile`.
+Per "attivare" queste variabili riavvia la shell, o esegui `source $HOME/.profile` in quella corrente.
 
 Esegui il comando `go version`. Se vedi dell'output simile a `go version go1.3.3 darwin/amd64`, è fatta!
 
@@ -79,14 +82,14 @@ Esegui il comando `go version`. Se vedi dell'output simile a `go version go1.3.3
 
 Scarica l'ultima versione in formato zip. Se sei su un sistema x64 vorrai usare `go#.#.#.windows-amd64.zip`, dove `#.#.#` è l'ultima versione di Go.
 
-Estrai il tutto in una cartella a tua scelta. `c:\Go` è una buona scelta.
+Estrai il tutto in una cartella a tua scelta. `c:\Go` va più che bene.
 
 Anche in questo caso dovrai lavorare su due variabili di sistema.
 
   1. `GOPATH` che punterà al tuo workspace. Nel mio caso, ad esempio, è `c:\users\goku\work\go`.
   2. Aggiungi `c:\Go\bin` alla variabile `PATH`.
 
-Puoi gestire le variabili d'ambiente tramite `Variabili d'Ambiente` nel tab `Avanzate` del pannello di controllo `Sistema`. In alcune versioni di Windows questa nomenclatura potrebbe cambiare leggermente.
+Puoi gestire le variabili d'ambiente tramite `Variabili d'Ambiente` nel tab `Avanzate` del pannello di controllo `Sistema`. Occhio, in alcune versioni di Windows questa nomenclatura potrebbe cambiare leggermente.
 
 Una volta fatto tutto, apri un prompt e digita `go version`. Se è andato tutto bene dovresti vedere un output simile a `go version go1.3.3 windows/amd64`.
 
