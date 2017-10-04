@@ -401,9 +401,9 @@ Se vieni da un linguaggio dinamico, alcune cose ti sembreranno noiose, quasi con
 
 Go non è un linguaggio orientato agli oggetti come C++, Java, Ruby o C#. Non ha oggetti, niente ereditarietà, nessun concetto associabile alla programmazione orientata agli oggetti che conosciamo, come polimorfismo od overloading.
 
-In Go esistono le strutture, alle quali possiamo associare dei metodi. C'è anche una semplice (ma efficace) forma di composizione di queste strutture. Il risultato? Codice più semplice, anche se a volte sentirai la mancanza di ciò che viene offerto dallo sviluppo orientato agli oggetti. (Varrebbe la pena ricordare che nell'antica battaglia del *composition over inheritance* Go è uno dei primi linguaggi che ha preso una posizione ben precisa).
+In Go esistono le strutture, alle quali possiamo associare dei metodi. C'è anche una semplice (ma efficace) forma di composizione di queste strutture. Il risultato? Codice probabilmente più semplice, anche se a volte sentirai la mancanza di ciò che viene offerto dallo sviluppo orientato agli oggetti. (Varrebbe la pena ricordare che nell'antica battaglia del *composition over inheritance* Go è uno dei primi linguaggi che ha preso una posizione ben precisa).
 
-Insomma, Go è abbastanza lontano dall'OOP. Tuttavia, ci sono alcune similitudini da notare nella definizione di una struttura e di una classe. Facciamo subito un esempio: ecco una struttura. La chiameremo `Sayian`.
+Insomma, Go è abbastanza lontano dall'OOP. Tuttavia, ci sono alcune similitudini che vale la pena notare nella definizione di una struttura e di una classe. Facciamo subito un esempio: ecco una struttura. La chiameremo `Sayian`.
 
 ```go
 type Saiyan struct {
@@ -416,9 +416,9 @@ Non è poi così illeggibile, vero?
 
 ## Dichiarazioni ed Inizializzazioni
 
-Nel capitolo precedente, parlando delle variabili, abbiamo dato uno sguardo ai principali tipi già presenti in Go, come interi e stringhe. Ora che la nostra "conversazione" a riguardo si sta ampliando, vale la pena spiegare il concetto di puntatore (pointer) nelle prossime righe.
+Nel capitolo precedente, parlando delle variabili, abbiamo dato uno sguardo ai tipi "base" presenti in Go, come interi e stringhe. Ora che la nostra "conversazione" a riguardo si sta ampliando, vale la pena spiegare il concetto di puntatore (pointer) nelle prossime righe.
 
-Dunque: abbiamo definito la nostra struttura. Diamo adesso un valore ad una variabile di questo tipo.
+Dunque: abbiamo definito la nostra struttura. Diamo, adesso, un valore ad una variabile di questo tipo.
 
 ```go
 goku := Saiyan{
@@ -427,7 +427,7 @@ goku := Saiyan{
 }
 ```
 
-*Nota:* la virgola `,` nella struttura è necessaria anche dopo l'ultimo elemento della struttura. Senza, infatti, il compilatore restituirà un errore.
+*Nota:* la virgola `,` nella struttura è necessaria anche dopo l'ultimo elemento della struttura. Senza, infatti, il compilatore restituisce un errore.
 
 Non devi necessariamente valorizzare tutti i campi della struttura. Ad esempio, un'istruzione del genere è perfettamente valida:
 
@@ -457,7 +457,7 @@ goku := Saiyan{
 
 Insomma, come vedi ci sono molti modi di fare assegnare alla variabile `goku` uno specifico valore. Detto questo, veniamo ai puntatori.
 
-Non sempre, appunto, avrai bisogno di accedere al valore di una variabile. In alcuni casi avrai bisogno di un puntatore a quella variabile, a quel valore. Puoi vedere un puntatore come un indirizzo specifico di memoria. Il "posto" dove trovare quel valore. Un po' come "essere a casa" e "avere l'indirizzo di casa", per capirci.
+Non sempre avrai bisogno di accedere al valore di una variabile: in alcuni casi avrai bisogno di un puntatore a quella variabile, a quel valore. Puoi vedere un puntatore come un indirizzo specifico di memoria. Il "posto" dove trovare quel valore. Un po' come "essere a casa" e "avere l'indirizzo di casa", per capirci.
 
 La domanda sorge spontanea: perché mai dovremmo aver bisogno di un puntatore?
 
@@ -475,7 +475,9 @@ func Super(s Saiyan) {
 }
 ```
 
-Sai dirmi quale sarà il suo output? 19000? Sbagliato. La funzione `Super`, certo, aggiunge 10000 al valore di `Power`... ma l'argomento passato alla funzione è comunque una copia del "goku originale" che si trova in `main`. Nello scope di `main`, quindi, `Power` rimane 9000.
+Sai dirmi quale sarà il suo output? Cosa? 19000?
+
+Sbagliato. La funzione `Super`, certo, aggiunge 10000 al valore di `Power`... ma l'argomento passato alla funzione è comunque una copia del "goku originale" che si trova in `main`. Nello scope di `main`, quindi, `Power` rimane 9000.
 
 Per far funzionare il tutto avremo bisogno di usare un puntatore. Così:
 
@@ -491,7 +493,7 @@ func Super(s *Saiyan) {
 }
 ```
 
-Guarda bene: abbiamo fatto due piccole ma importantissime modifiche. Innanzitutto, abbiamo usato l'operatore `&` che serve ad ottenere l'indirizzo della variabile con cui viene usato. Viene infatti chiamato l'operatore "address of". Come conseguenza, quindi, abbiamo modificato il tipo di parametro che `Super` si aspetta. Non più un `Saiyan` dunque, bensì un `*Saiyan` (o *puntatore a Saiyan*). C'è quindi una relazione tra `Saiyan` e `*Saiyan`, anche se rimangono due tipi separati e distinti.
+Guarda bene: abbiamo fatto due piccole, ma importantissime, modifiche. Innanzitutto abbiamo aggiunto l'operatore `&`, che serve ad ottenere l'indirizzo della variabile su cui viene usato. Viene infatti chiamato l'operatore "address of". Come conseguenza, quindi, abbiamo modificato il tipo di parametro che `Super` si aspetta. Non più un `Saiyan` dunque, bensì un `*Saiyan` (o *puntatore a Saiyan*). C'è quindi una relazione tra `Saiyan` e `*Saiyan`, anche se rimangono due tipi separati e distinti.
 
 Proviamo ad eseguire ora il programma: il risultato stavolta sarà 19000!
 
@@ -513,7 +515,7 @@ Stavolta il risultato sarà 9000. Perché? Guarda bene: hai aggiunto `&` in `Sup
 
 Un'altra cosa su cui vale la pena riflettere è il "peso": copiare un puntatore è molto meglio rispetto al copiare una struttura complessa e passarla come parametro... non trovi? Su una macchina a 64-bit, un puntatore è grande ben 64 bit. Se ci trovassimo ad usare strutture molto grandi, creare delle copie sarebbe decisamente problematico. Il vero punto di forza consiste proprio nella condivisione di questo valore.
 
-Se alcune cose non ti sono chiarissime, rileggi più di una volta questa parte. In ogni caso non temere: continueremo ad affrontare la questione puntatore/valore più avanti.
+Se alcune cose non ti sono chiarissime, rileggi più di una volta questa parte. Sentiti libero di fare qualche prova in più con il codice. In ogni caso non temere: continueremo ad affrontare la questione puntatore/valore più avanti.
 
 ## Associare Metodi alle Strutture
 
@@ -535,7 +537,7 @@ Con il codice qui sopra stiamo affermando che `*Saiyan` è il ricevente (receive
 ```go
 goku := &Saiyan{"Goku", 9001}
 goku.Super()
-fmt.Println(goku.Power) // will print 19001
+fmt.Println(goku.Power) // ... stamperà "19001"
 ```
 
 ## Costruttori
@@ -574,7 +576,7 @@ goku := new(Saiyan)
 goku := &Saiyan{}
 ```
 
-Sta a te decidere quale usare, tuttavia sappi che molti  trovano più comoda la seconda nel momento in cui ci sono anche dei campi da inizializzare, visto che il risultato è più leggibile.
+Sta a te decidere quale usare. Tieni a mente che molti trovano più comoda la seconda, nel caso in cui ci siano anche dei campi da inizializzare, visto che il risultato è più leggibile.
 
 ```go
 goku := new(Saiyan)
@@ -589,7 +591,7 @@ goku := &Saiyan {
 }
 ```
 
-Ad ogni modo, a prescindere da quale sia l'approccio scelto, ricorda che scegliere il "factory" pattern visto poco sopra è molto utile: puoi separare il resto del tuo codice da tutti i dettagli relativi all'allocazione.
+Ad ogni modo, a prescindere da quale sia l'approccio scelto, ricorda che scegliere il "factory pattern" visto poco sopra è molto utile: puoi separare il resto del tuo codice da tutti i dettagli relativi all'allocazione.
 
 ## Campi di una Struttura
 
@@ -633,10 +635,8 @@ public class Person {
 }
 
 public class Saiyan {
-  // Saiyan is said to have a person
   private Person person;
 
-  // we forward the call to person
   public String getName() {
     return this.person.getName();
   }
@@ -660,7 +660,6 @@ type Saiyan struct {
   Power int
 }
 
-// and to use it:
 goku := &Saiyan{
   Person: &Person{"Goku"},
   Power: 9001,
@@ -684,7 +683,7 @@ Le ultime due istruzioni sono entrambe valide, e stamperanno lo stesso valore.
 
 ### Overloading
 
-Nonostante l'overaloading non sia qualcosa di "specifico" delle strutture, vale la pena comunque darci un'occhiata. Di base, Go *non* supporta l'overloading. Di conseguenza, vedrai (e scriverai) spesso funzioni come `Load`, `LoadById`, `LoadByName` e così via.
+Nonostante l'overaloading non sia qualcosa di "specifico" delle strutture, vale la pena comunque darci un'occhiata e capire come implementare una cosa del genere in Go. Di base, Go *non* supporta l'overloading. Quindi vedrai (e scriverai) spesso funzioni come `Load`, `LoadById`, `LoadByName` e così via.
 
 Ora, dato che la composizione implicita è un (comodo) trucco del compilatore, possiamo anche "sovrascrivere" una funzione per un tipo composto. Abbinando il codice qui sotto a quello visto nell'esempio precedente...
 
@@ -698,7 +697,7 @@ func (s *Saiyan) Introduce() {
 
 ## Puntatori Vs. Valori
 
-Quando scriverai il codice dei tuoi programmi in Go, spesso ti ritroverai a chiederti: *devo usare un puntatore oppure direttamente un valore?* Beh, un valore non è una cattiva scelta in casi come:
+Scrivendo il codice dei tuoi programmi in Go, spesso ti chiederai: *devo usare un puntatore oppure direttamente un valore?* Beh, un valore non è una cattiva scelta in casi come:
 
 * assegnamento di una variabile in locale;
 * campo in una struttura;
@@ -706,11 +705,9 @@ Quando scriverai il codice dei tuoi programmi in Go, spesso ti ritroverai a chie
 * parametro di una funzione;
 * ricevente di un metodo;
 
-Per il resto... nel dubbio, usa un puntatore.
+Per il resto... nel dubbio, usa un puntatore. Ricorda che passare un valore (e non un puntatore) ad una funzione è un ottimo modo per preservare l'immutabilità. Può essere il comportamento di cui hai bisogno, altre volte invece no.
 
-Ad ogni modo, ricorda che passare un valore (e non un puntatore) ad una funzione è un ottimo modo per preservare l'immutabilità. Può essere il comportamento di cui hai bisogno, altre volte invece no. Tienilo a mente.
-
-Considera poi, comunque, i costi di creazione di una copia di una tale struttura. In altri casi però potresti avere strutture semplici, come questa:
+Considera poi, comunque, i costi di creazione di una copia di una tale struttura. Più la struttura è grande, meno conviene. In altri casi però potresti avere strutture semplici, come questa:
 
 ```go
 type Point struct {
@@ -719,13 +716,13 @@ type Point struct {
 }
 ```
 
-In casi come questi, il costo di copia della struttura è rilevante quasi quanto l'accesso diretto, senza troppo overhead.
+... inutile direi che qui il costo di copia della struttura è rilevante quasi quanto l'accesso diretto, senza troppo overhead.
 
-Insomma: valuta caso per caso. La pratica rende perfetti.
+Insomma, la regola d'oro è: valuta caso per caso. La pratica rende perfetti.
 
 ## Prima di Proseguire
 
-Questo capitolo ti ha dato una prima infarinatura sulle strutture, come crearne un'istanza e come rendere queste strutture "ricevitori" di una funzione. Abbiamo inoltre aggiunto i puntatori al nostro bagaglio.
+Questo capitolo ti ha dato una prima infarinatura sulle strutture, su come crearne un'istanza e come rendere queste strutture "ricevitori" di una funzione. Abbiamo inoltre aggiunto i puntatori al nostro bagaglio.
 
 Nei prossimi capitoli aggiungeremo altra carne al fuoco: nuove strutture e approfondimenti sui meccanismi di questo linguaggio.
 
