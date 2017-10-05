@@ -728,11 +728,11 @@ Nei prossimi capitoli aggiungeremo altra carne al fuoco: nuove strutture e appro
 
 # Capitolo 3 - Map, Array e Slice
 
-Fino ad ora abbiamo visto i tipi di base, già disponibili, e le strutture. Adesso facciamo un passo avanti, alla scoperta di Map, Array e Slice.
+Fino ad ora abbiamo visto i tipi di base, già disponibili, e le strutture. Adesso facciamo un passo avanti: scopriamo Map, Array e Slice.
 
 ## Array
 
-Se vieni da Python, Ruby, Perl, Javascript, PHP (ed altri) avrai probabilmente già presente il concetto di *array dinamico*. Sono array la cui dimensione è variabile, e aumenta o diminuisce in base alle necessità. In Go, come in altri linguaggi, gli array sono "fissi", nel senso che quando ne dichiariamo uno dobbiamo specificarne la dimensione. Una volta dichiarato, tale dimensione non può cambiare.
+Se vieni da Python, Ruby, Perl, Javascript, PHP (ed altri) avrai probabilmente già presente il concetto di *array dinamico*. Sono array la cui dimensione è variabile, e aumenta o diminuisce in base alle necessità. In Go, come in altri linguaggi, gli array sono "fissi", nel senso che quando ne dichiariamo uno dobbiamo specificarne la dimensione. Una volta dichiarata, tale dimensione non può cambiare.
 
 ```go
 var scores [10]int
@@ -759,13 +759,13 @@ Gli array fanno bene il lavoro lavoro... ma sono rigidi. Molto rigidi, come puoi
 
 ## Slice
 
-In Go è raro usare direttamente degli array. Tendenzialmente userai altre strutture che si chiamano "slice". Si tratta di una struttura leggera il cui compito è rappresentare una "porzione" di array. Puoi creare uno slice in vari modi, vediamoli.
+In Go è piuttosto raro l'usare direttamente un array. Tendenzialmente si usano altre strutture che si chiamano "slice", molto leggere, il cui compito è rappresentare una "porzione" di array. Possiamo creare uno slice in vari modi: vediamoli.
 
 ```go
 scores := []int{1,4,293,4,9}
 ```
 
-Come puoi notare, in questo esempio non abbiamo dichiarato la dimensione della struttura tra parentesi quadre. Per capire la differenza, scopriamo un altro modo di creare slice: la funzione `make`.
+Come puoi notare, in questo esempio non abbiamo dichiarato la dimensione della struttura tra le parentesi quadre. Per capire la differenza, scopriamo un altro modo di creare slice: la funzione `make`.
 
 ```go
 scores := make([]int, 10)
@@ -777,9 +777,7 @@ Abbiamo usato `make` al posto di `new` perché creare uno slice non consiste sol
 scores := make([]int, 0, 10)
 ```
 
-Qui, invece, abbiamo creato uno slice di lunghezza 0 ma con capacità pari a 10.
-
-Confuso, vero? Bene. Adesso capirai meglio con qualche esempio.
+Qui, invece, abbiamo creato uno slice di lunghezza 0 ma con capacità pari a 10. Confuso, vero? Adesso capirai meglio con qualche esempio.
 
 ```go
 func main() {
@@ -789,17 +787,17 @@ func main() {
 }
 ```
 
-Questo esempio crasha. Perché? Semplice: il nostro slice ha una lunghezza pari a zero. Certo, l'array sottostante ha 10 elementi, tuttavia bisogna "espandere" il nostro slice per accedervi. Per espandere uno slice si può usare la funzione `append`.
+Questo esempio qui sopra restituisce un errore. Perché? Semplice: il nostro slice ha una lunghezza pari a zero. Certo, l'array sottostante ha 10 elementi, tuttavia bisogna "espandere" il nostro slice per accedervi. Per espandere uno slice si può usare la funzione `append`.
 
 ```go
 func main() {
   scores := make([]int, 0, 10)
   scores = append(scores, 5)
-  fmt.Println(scores) // prints [5]
+  fmt.Println(scores) // stampa [5]
 }
 ```
 
-Qui abbiamo "aumentato" la lunghezza dello slice fino a 5. Il codice dell'esempio precedente, tuttavia, porterebbe ugualmente ad un errore. Riproviamo così:
+Abbiamo "aumentato" la lunghezza dello slice fino a 5. Il codice dell'esempio precedente, tuttavia, porterebbe ugualmente ad un errore. Riproviamo così:
 
 ```go
 func main() {
@@ -832,7 +830,7 @@ func main() {
 }
 ```
 
-La capacità iniziale di `scores` era 5 ma, per arrivare a mantenere 25 valori dovrà essere ridimensionata tre volte: a 10, 20 e a 40.
+La capacità iniziale di `scores` era 5. Tuttavia, per arrivare a mantenere 25 valori dovrà essere ridimensionato tre volte: a 10, 20 e a 40.
 
 Ecco un ultimo esempio:
 
@@ -883,7 +881,7 @@ func extractPowers(saiyans []*Saiyans) []int {
 }
 ```
 
-Gli slice, in Go, sono un concetto molto interessante e potente, rispetto al classico array. Esiste anche in altri linguaggi: in JavaScript c'è il metodo `slice`, in Ruby puoi usare la sintassi `[START..END]`, in Python invece `[START:END]`. In questi linguaggi viene sempre creata una copia dell'array, che viene "affettata" e restituita. Ecco un esempio in Ruby:
+Gli slice, in Go, sono un concetto molto interessante e potente rispetto al classico array. Esiste anche in altri linguaggi: in JavaScript c'è il metodo `slice`, in Ruby puoi usare la sintassi `[START..END]`, in Python invece `[START:END]`. In questi linguaggi viene sempre creata una copia dell'array, che viene "affettata" e restituita. Ecco un esempio in Ruby:
 
 ```ruby
 scores = [1,2,3,4,5]
@@ -901,7 +899,9 @@ slice[0] = 999
 fmt.Println(scores)
 ```
 
-Stavolta l'output è `[1, 2, 999, 4, 5]`. Le cose cambiano, vero? Facciamo un altro esempio, qualcosa di classico: vogliamo trovare il primo spazio in una stringa (perché lo slicing funziona anche sulle stringhe) dopo i primi cinque caratteri. Ecco come faremmo usando JavaScript:
+Stavolta l'output è `[1, 2, 999, 4, 5]`.
+
+Cosa è cambiato? Facciamo un altro esempio, qualcosa di classico: vogliamo trovare il primo spazio in una stringa (perché lo slicing funziona anche sulle stringhe) dopo i primi cinque caratteri. Ecco come faremmo usando JavaScript:
 
 ```js
 haystack = "the spice must flow";
@@ -932,7 +932,7 @@ func main() {
 
 func removeAtIndex(source []int, index int) []int {
   lastIndex := len(source) - 1
-  //swap the last value and the value we want to remove
+
   source[index], source[lastIndex] = source[lastIndex], source[index]
   return source[:lastIndex]
 }
@@ -960,7 +960,7 @@ func main() {
 }
 ```
 
-Se vuoi (anzi, te lo consiglio) prenditi del tempo e gioca con questo codice. Prova più varianti per capire bene il meccanismo che c'è sotto. Che succede se cambi la chiamata `copy` con qualcosa come `copy(worst[2:4], scores[:5])`?
+Se vuoi (anzi, te lo consiglio) prenditi del tempo e gioca con questo codice. Prova più varianti per capire bene il meccanismo che c'è sotto. Che succede se cambi la chiamata `copy` con qualcosa come `copy(worst[2:4], scores[:5])`? Sporcati le mani!
 
 ## Map
 
@@ -996,7 +996,7 @@ Le mappe crescono dinamicamente: se vogliamo però possiamo comunque assegnare u
 lookup := make(map[string]int, 100)
 ```
 
-Come al solito, se hai un'idea di quante chiavi avrai, più o meno, definire una dimensione iniziale può aiutare a livello di performance.
+Come al solito, se hai un'idea di quante chiavi avrai, più o meno, il definire una dimensione iniziale può aiutare a livello di performance.
 
 Puoi usare una mappa come campo di una struttura. Basta definirla così:
 
@@ -1028,8 +1028,6 @@ lookup := map[string]int{
 
 Iterare tra i valori di una mappa è semplice: basta usare il `for`, combinato con `range`.
 
-We can iterate over a map using a `for` loop combined with the `range` keyword:
-
 ```go
 for key, value := range lookup {
   ...
@@ -1040,7 +1038,9 @@ L'iterazione in una mappa non è ordinata. Ogni iterazione ritornerà le coppie 
 
 ## Puntatori Vs. Valori
 
-Abbiamo finito il secondo capitolo cercando di capire quando usare un puntatore e quando una variabile. Continuiamo la conversazione includendo anche array e mappe?
+Abbiamo finito il secondo capitolo cercando di capire quando conviene usare un puntatore e quando una variabile. Perché non continuare la conversazione allargandola ad array e mappe?
+
+Guarda queste due istruzioni:
 
 ```go
 a := make([]Saiyan, 10)
@@ -1050,15 +1050,15 @@ a := make([]Saiyan, 10)
 b := make([]*Saiyan, 10)
 ```
 
-Molti sviluppatori pensano che passare `b` ad una funzione sia più efficiente. In realtà, quello che viene passato è una copia dello slice, che è già una reference. Di conseguenza, non cambia molto in questo caso.
+Molti sviluppatori pensano che passare `b` ad una funzione sia più efficiente. In realtà, quello che viene passato è una copia dello slice, che è già una reference. Di conseguenza, non c'è un'enorme differenza.
 
-La vera differenza la vedrai nel momento in cui modificherai i valori dello slice o della mappa. Si applica la stessa identica logica che abbiamo visto nel secondo capitolo. Insomma, la regola è: non importa molto quello che fai con l'array o la mappa in sè, l'unica cosa che può influenzare la tua decisione è cosa devi fare con i singoli valori.
+Quello che interessa lo vedrai nel momento in cui modificherai i valori dello slice o della mappa. Si applica la stessa identica logica che abbiamo visto nel secondo capitolo, che si può riassumere in: non importa molto quello che fai con l'array o la mappa in sè, l'unica cosa che può influenzare la tua decisione è cosa devi fare con i singoli valori.
 
 ## Prima di Proseguire
 
-Gli array e le mappe in Go funzionano più o meno come negli altri linguaggi. Se sei abituato agli array dinamici dovrai adattarti ad un paio di piccole cose, vero, ma come hai visto `append` risolve molti dei tuoi problemi facilmente. Abbiamo poi visto gli slice, indubbiamente impattanti sulla scrittura del codice.
+Gli array e le mappe in Go funzionano più o meno come negli altri linguaggi. Se sei abituato agli array dinamici dovrai adattarti ad un paio di piccole cose, vero, ma come hai visto `append` risolve molti dei tuoi problemi facilmente. Gli slice sono un ulteriore miglioramento del concetto.
 
-Ci sono anche altri casi particolari, ma non è nel mio interesse coprirli per ora. Meglio fare qualcosa di interessante, per cui proseguiamo!
+Ci sono anche altri casi particolari, ma non è nel mio interesse coprirli per ora. Meglio fare qualcosa di interessante, qualcosa di più "pratico"... per cui proseguiamo!
 
 # Capitolo 4 - Organizzazione del Codice ed Interfacce
 
