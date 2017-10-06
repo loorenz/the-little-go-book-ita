@@ -1062,11 +1062,11 @@ Ci sono anche altri casi particolari, ma non è nel mio interesse coprirli per o
 
 # Capitolo 4 - Organizzazione del Codice ed Interfacce
 
-In questo capitolo daremo uno sguardo a come organizzare il nostro codice.
+In questo capitolo daremo uno sguardo a come organizzare il codice di un nostro progetto Go.
 
 ## Package
 
-Abbiamo visto come eseguire e compilare dei programmi molto semplici. Le cose però cambiano in caso di progetti più complessi. In Go, i nomi dei package seguono la struttura delle directory nel workspace. Se non ricordi di cosa sto parlando, è la cartella il cui path diventa la variabile `$GOPATH` (se hai bisogno, riguarda i capitoli precedenti, è un buon momento). Quindi, supponendo di lavorare ad un software dedicato ad un e-commerce, ci ritroveremo ad avere un package "shopping" il cui codice si trova in `$GOPATH/src/shopping`.
+Abbiamo visto come eseguire e compilare dei programmi molto semplici. Le cose però cambiano in caso di progetti più complessi. In Go, i nomi dei package seguono la struttura delle directory nel workspace. Se non ricordi di cosa sto parlando, è la cartella il cui path corrisponde alla variabile d'ambiente `$GOPATH` (se hai bisogno, riguarda i capitoli precedenti, è un buon momento). Quindi, supponendo di lavorare ad un software dedicato ad un e-commerce, ci ritroveremo ad avere un package "shopping" il cui codice si trova in `$GOPATH/src/shopping`.
 
 Ovviamente non possiamo tenere tutto in una sola cartella. Potremmo ad esempio avere una parte del software dedicata alla comunicazione con il database: creeremo una sottocartella `$GOPATH/src/shopping/db` ed il package sarà chiamato `db`. Per accederci da un altro package, quindi, dovremo "importare" `shopping/db`.
 
@@ -1112,7 +1112,7 @@ func PriceCheck(itemId int) (float64, bool) {
 }
 ```
 
-Probabilmente starai pensando che importare `shopping/db` sia superfluo, perché siamo già in `shopping`. Non è così: in realtà stai importando `$GOPATH/src/shopping/db`. Potresti, infatti, ritrovarti a dover importare un altro package in un'altra cartella (ad esempio un package `test/db`). In tal caso, `test/db` corrisponderebbe a `$GOPATH/src/test/db`.
+Probabilmente starai pensando che importare `shopping/db` sia superfluo, perché siamo già in `shopping`. Non è così: in realtà stai importando `$GOPATH/src/shopping/db`. Potresti, infatti, ritrovarti a dover importare un altro package in un'altra cartella (ad esempio un package `altropackage/db`). In tal caso, `altropackage/db` corrisponderebbe a `$GOPATH/src/altropackage/db`.
 
 Se stai costruendo un tuo package non hai bisogno d'altro oltre a quello che hai appena visto. Per costruire un eseguibile, invece, avrai bisogno anche di un `main`. Facciamolo subito: nella cartella `shopping` crea una cartella `main`, ed al suo interno un file `main.go`.
 
@@ -1139,11 +1139,9 @@ go run main/main.go
 
 ### Import Ciclici
 
-Più diventerai bravo con Go, maggiore sarà la complessità dei software che scriverai. Prima o poi ti ritroverai in quella situazione in cui un package A importa un package B ma il package B, a sua volta, ha bisogno di qualcosa del package A (direttamente o indirettamente, tramite un terzo package).
+Più diventerai bravo con Go, maggiore sarà la complessità dei software che scriverai. Prima o poi, te l'assicuro, ti ritroverai in quella situazione in cui un package A importa un package B ma il package B, a sua volta, ha bisogno di qualcosa del package A (direttamente o indirettamente, tramite un terzo package).
 
-Una cosa del genere però non è consentita dal compilatore!
-
-Vediamo di scatenare volontariamente l'errore per capirne qualcosa di più.
+Una cosa del genere però non è consentita dal compilatore! Vediamo di scatenare volontariamente l'errore per capirne qualcosa di più.
 
 Sposta la definizione di `Item` da `shopping/db/db.go` in `shopping/pricecheck.go`. Il file `pricecheck.go` adesso dovrebbe essere così:
 
@@ -1217,7 +1215,7 @@ func LoadItem(id int) *models.Item {
 
 Spesso ti troverai a condividere molto più di un semplice `model`. Un altro classico esempio sono le cartelle `utilities`. Organizzare il codice in questo modo rompe gli import ciclici e aiuta a tenere il codice più pulito.
 
-Certo, dobbiamo ancora vedere le interfacce, che migliorano ancora di più le cose: le vedremo a breve.
+Certo, dobbiamo ancora vedere le interfacce, che migliorano ancora di più le cose: non adesso però.
 
 ### Visibilità
 
@@ -1225,7 +1223,7 @@ Go usa una semplice regola per definire quali funzioni e quali tipi sono visibil
 
 La cosa si applica anche ai campi delle strutture. Se un campo inizia con una lettera maiuscola, allora solo il codice all'interno dello stesso package potrà accedervi.
 
-Supponiamo, ad esempio, che un nostro file `items.go` abbia una funzione come:
+Supponiamo, ad esempio, che un nostro file `items.go` abbia una funzione come questa di seguito.
 
 ```go
 func NewItem() *Item {
@@ -1239,7 +1237,7 @@ Prova direttamente tu, per capire meglio! Cambia nomi ai campi, ai tipi, a tutto
 
 ### Gestione dei Package
 
-Il comando `go` che abbiamo usato finora con `run` e `build` ha anche un altro sottocomando: `get`, che si occupa di prendere librerie di terze parti per usarle nei nostri progetti. `go get` supporta vari protocolli: facciamo un semplice esempio che prende un package da Github. Occhio, perché avremo bisogno di Git installato in locale.
+Il comando `go` che abbiamo usato finora con `run` e `build` ha anche un altro "sottocomando": `get`, che si occupa di prendere librerie di terze parti per usarle nei nostri progetti. `go get` supporta vari protocolli: facciamo un semplice esempio che prende un package da Github. Occhio, perché avremo bisogno di Git installato in locale.
 
 Torna alla shell/prompt e digita:
 
@@ -1257,7 +1255,7 @@ import (
 )
 ```
 
-Sembra quasi un URL ma non lo è: in realtà è la struttura delle cartelle che abbiamo visto prima, visto che il package è in `$GOPATH/src/github.com/mattn/go-sqlite3`.
+Sembra quasi un URL... ma non è così: in realtà è la struttura delle cartelle che abbiamo visto prima, visto che il package è in `$GOPATH/src/github.com/mattn/go-sqlite3`.
 
 ### Dependency Management
 
@@ -1270,6 +1268,8 @@ Se invece esegui `go get -u` i vari package verranno aggiornati automaticamente.
 Certo, c'è un bel problema con `go get` da tenere in considerazione: non c'è modo di specificare una revisione specifica di una libreria: punterà sempre a master/head/trunk/default. Un bel problema se dovessi aver bisogno, per due progetti diversi, di due versioni diverse della stessa libreria.
 
 Per risolvere il problema puoi comunque usare un tool di management delle dipendenze di terze parti. Ce ne sono vari tra cui scegliere su [questa pagina della go-wiki](https://github.com/golang/go/wiki/PackageManagementTools).
+
+Al momento, comunque, la community sta cercando di risolvere la cosa proponendo un tool standard, [dep](https://github.com/golang/dep).
 
 ## Interfacce
 
@@ -1291,7 +1291,7 @@ type ConsoleLogger struct { ... }
 type FileLogger struct { ... }
 ```
 
-Considera, inoltre, che usando le interfacce al posto dell'implementazione concreta puoi facilmente cambiare (e testare) l'implementazione sottostante senza impattare troppo sul codice. Un fattore da non sottovalutare.
+Considera, inoltre, che usando le interfacce al posto dell'implementazione concreta puoi facilmente cambiare (e testare) l'implementazione sottostante senza impattare troppo sulla manutenibilità del codice. Un fattore da non sottovalutare.
 
 Come usare un'interfaccia? Semplice: esattamente come qualsiasi altro tipo.
 
@@ -1332,15 +1332,15 @@ L'idea di fondo è (come avviene anche altrove) promuovere la creazione di picco
 
 Le interfacce possono inoltre partecipare nella composizione di un'altra struttura. Inoltre, le interfacce possono essere tranquillamente composte da altre interfacce. Ad esempio, `io.ReadCloser` è un'interfaccia composta da `io.Reader` ed `io.Closer`.
 
-Ultimo ma non per importanza, le interfacce vengono usate anche per evitare gli import ciclici: se l'implementazione non c'è, le dipendenze sono sempre più limitate.
+Infine, come già detto prima, le interfacce vengono usate anche per evitare gli import ciclici: se non passiamo un'implementazione (ma un'interfaccia), le dipendenze "dirette" (e quindi anche cicliche) sono sempre più limitate.
 
 ## Prima di Proseguire
 
-In questo capitolo ti ho dato vari consigli su come strutturare il tuo codice. Sono tanti piccoli suggerimenti, è vero, ma con il tempo capirai al meglio quale approccio usare. All'inizio ti sentirai come "limitato" in alcune scelte. Dopo i tuoi primi progetti più seri con Go inizierai a prenderci la mano, vedrai.
+In questo capitolo ti ho dato vari consigli su come strutturare il tuo codice. Sono tanti piccoli suggerimenti, è vero, ma con il tempo capirai meglio quale approccio usare. All'inizio ti sentirai come "limitato" in alcune scelte. Dopo i tuoi primi progetti più seri con Go inizierai a prenderci la mano, vedrai.
 
 Il modo in cui Go gestisce la visibilità di tipi, funzioni e campi è abbastanza semplice ed efficace. E consistente.
 
-Se già conosci il concetto di interfaccia, la sezione che ho dedicato a loro in questo capitolo non dovrebbe averti dato problemi. Se non ci hai mai lavorato, considera che potresti avere bisogno di tempo prima di prenderci la mano. Sono uno strumento potentissimo, fidati.
+Se già conosci il concetto di interfaccia, la sezione che ho dedicato a loro in questo capitolo non dovrebbe averti dato problemi. Se non ci hai mai lavorato, considera che potresti avere bisogno di tempo prima di prenderci la mano. Sono uno strumento potentissimo.
 
 # Capitolo 5 - Pillole
 
