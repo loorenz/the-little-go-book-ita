@@ -1373,7 +1373,7 @@ func main() {
 }
 ```
 
-Se vuoi puoi creare un tuo errore, per adattarlo alle tue esigenze. L'unica cosa di cui devi essere assicurarti è di aderire al contratto dell'interfaccia `error`, questa:
+Se vuoi puoi creare un tuo errore, per adattarlo alle tue esigenze. L'unica cosa di cui devi essere assicurarti è di aderire al contratto dell'interfaccia `error`, questa qui di seguito:
 
 ```go
 type error interface {
@@ -1381,7 +1381,7 @@ type error interface {
 }
 ```
 
-Più comunemente, possiamo creare i nostri errori importando il package `errors` ed usandone la funzione `New`.
+Possiamo anche creare i nostri errori importando il package `errors` ed usandone la funzione `New`.
 
 ```go
 import (
@@ -1404,7 +1404,7 @@ C'è un pattern abbastanza diffuso nella standard library di Go riguardo l'uso d
 var EOF = errors.New("EOF")
 ```
 
-Viene definita al di fuori di una funzione, è accessibile all'esterno (la prima lettera del nome è maiuscola, dopotutto). Svariate funzioni ne fanno uso all'interno di questo package ed ovviamente possiamo usarla anche noi, come "consumatori" della libreria.
+Viene definita al di fuori di una funzione, è accessibile all'esterno (la prima lettera del nome `EOF` è maiuscola, dopotutto). Svariate funzioni ne fanno uso all'interno di questo package ed ovviamente possiamo usarla anche noi, come "consumatori" della libreria.
 
 ```go
 package main
@@ -1444,17 +1444,19 @@ func main() {
     return
   }
   defer file.Close()
-  // read the file
+  // leggi qui l file...
 }
 ```
 
-Ok, se provi ad eseguire questo codice sicuramente otterrai un errore (il file non esiste). Il punto è mostrarti come `defer` funziona. In poche parole, quello che segue `defer` verrà eseguito esattamente alla fine della funzione in cui è scritto. In questo esempio, `file.Close()` verrà eseguito esattamente dopo la fine di `main`. In questo modo ci occupiamo di aprire e chiudere un file "nello stesso punto", in un certo senso.
+Ok, se provi ad eseguire questo codice sicuramente otterrai un errore (il file non esiste). Il punto è mostrarti come funziona `defer`. In poche parole, quello che segue `defer` verrà eseguito esattamente alla fine della funzione in cui è scritto. In questo esempio, `file.Close()` verrà eseguito esattamente dopo la fine di `main`. In questo modo ci occupiamo di aprire e chiudere un file "nello stesso punto", rendendo le cose più ordinate.
 
 ## go fmt
 
 Molti dei programmi scritti in Go seguono le stesse regole di formattazione. Ad esempio, il tab viene usato per indentare, le parentesi graffe vanno sulla stessa linea dello statement e così via.
 
 Lo so, tu probabilmente hai il tuo stile e vuoi continuarlo ad usare. Beh, è quello che ho fatto anche io ma sono sincero: felicissimo di averlo abbandonato. Il motivo? Il comando `go fmt`. Semplicissimo da usare, una volta lanciato "pulisce" il tuo progetto rimettendo in riga tutto il tuo codice, sistemando la formattazione, ordinando gli import e così via.
+
+Basta un...
 
 ```
 go fmt ./...
@@ -1499,15 +1501,15 @@ func add(a interface{}, b interface{}) interface{} {
 }
 ```
 
-... per creare una "somma" di due elementi di qualsiasi tipo. Certo, poi dovresti implementarla. Per covertire una "variabile interfaccia" in un tipo specifico, usa `.(TYPE)` così:
+... per creare una "somma" di due elementi di qualsiasi tipo. Certo, poi dovresti implementarla. Per convertire una "variabile interfaccia" in un tipo specifico, usa `.(TYPE)` così:
 
 ```go
 return a.(int) + b.(int)
 ```
 
-Occhio, perché se il tipo sottostante non dovesse essere `int` alla fine uscirà fuori un errore.
+Occhio, perché se il tipo sottostante non dovesse essere `int` alla fine ne verrà fuori un errore.
 
-Se ti interessa, c'è anche un "type switch" da usare:
+Se ti interessa, c'è anche un "type switch" da usare in queste occasioni:
 
 ```go
 switch a.(type) {
@@ -1520,7 +1522,7 @@ switch a.(type) {
 }
 ```
 
-Probabilmente userai le empty interface più del previsto. Vero, non è codice pulitissimo e convertire i valori in questo modo può essere pericoloso: è bene comunque conoscere questa possibilità.
+Vero, non è codice pulitissimo e convertire i valori in questo modo può essere pericoloso: è bene comunque conoscere questa possibilità.
 
 ## Stringhe e Array di Byte
 
@@ -1538,13 +1540,13 @@ Questo modo di convertire le variabili è abbastanza comune anche nel contesto d
 int64(count)
 ```
 
-Ricorda comunque che usando `[]byte(X)` o `string(X)` stai creando una copia del dato. Le stringhe, infatti, sono immutabili.
+Ricorda comunque che usando `[]byte(X)` o `string(X)` stai creando una copia del dato. Le stringhe, infatti, sono sempre immutabili.
 
 Le stringhe sono fatte di `runes` (rune), punti unicode. Il che significa che calcolando la lunghezza di alcune stringhe non otterrai un risultato "giusto". Un esempio:
 
     fmt.Println(len("椒"))
 
-Iterando su una stringa usando `range` otterrai queste rune, non byte.
+Iterando su una stringa usando `range` otterrai queste rune, non dei byte.
 
 ## Tipi di Funzione
 
@@ -1554,7 +1556,7 @@ Le funzioni sono un tipo first-class.
 type Add func(a int, b int) int
 ```
 
-puoi usarli ovunque, come tipo di un campo, come parametro, come valore di ritorno.
+puoi usare questo tipo ovunque, per un campo o come parametro, o come valore di ritorno.
 
 ```go
 package main
@@ -1580,9 +1582,11 @@ Usare le funzioni in questo modo ti aiuta a disaccopiare il codice dalle specifi
 
 ## Prima di Proseguire
 
-Abbiamo dato uno sguardo ai vari aspetti dello sviluppo in Go. In questo capitolo abbiamo visto come vengono gestiti gli errori (ad alcuni questo modo non piace), come rilasciare una certa risorsa nel modo più adeguato e tante altre piccole chicche.
+Abbiamo dato uno sguardo ai vari aspetti dello sviluppo in Go. In questo capitolo abbiamo visto come vengono gestiti gli errori (ad alcuni questo modo non piace, sappilo), come rilasciare una certa risorsa nel modo più adeguato e tante altre piccole chicche.
 
 Una cosa è certa: non abbiamo visto tutto quello che Go può offrirci. Tuttavia, con questa prima infarinatura dovremmo essere capaci di gestire al meglio la maggior parte delle situazioni.
+
+Manca soltanto una cosa, a questo punto...
 
 # Capitolo 6 - Concorrenza
 
