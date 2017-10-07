@@ -1,6 +1,8 @@
 ## Sul Libro ##
 [The Little Go Book](http://openmymind.net/The-Little-Go-Book/) è un libro, gratuito, che introduce al linguaggio Go.
 
+Puoi scaricarlo, in formato PDF, direttamente da [questo link](http://francesco.codes/wp-content/uploads/2017/10/go.pdf).
+
 Questo libro è stato scritto da [Karl Seguin](http://openmymind.net), già autore di:
 
 * [Scaling Viki](http://openmymind.net/scaling-viki/)
