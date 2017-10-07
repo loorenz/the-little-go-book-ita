@@ -1,76 +1,78 @@
-## About ##
-[The Little Go Book](http://openmymind.net/The-Little-Go-Book/) is a free book introducing Go.
+## Sul Libro ##
+[The Little Go Book](http://openmymind.net/The-Little-Go-Book/) è un libro, gratuito, che introduce al linguaggio Go.
 
-The book was written by [Karl Seguin](http://openmymind.net), author of:
+Questo libro è stato scritto da [Karl Seguin](http://openmymind.net), già autore di:
 
 * [Scaling Viki](http://openmymind.net/scaling-viki/)
 * [The Little Redis Book](http://openmymind.net/2012/1/23/The-Little-Redis-Book/)
 * [The Little MongoDB Book](http://openmymind.net/2011/3/28/The-Little-MongoDB-Book/)
 * [Foundations of Programming](http://openmymind.net/FoundationsOfProgramming.pdf)
 
-## License ##
-The book is freely distributed under the  [Attribution-NonCommercial-ShareAlike 4.0 International](<http://creativecommons.org/licenses/by-nc-sa/4.0/>).
+## Licenza ##
+Questo libro è distribuito sotto la licenza  [Attribution-NonCommercial-ShareAlike 4.0 International](<http://creativecommons.org/licenses/by-nc-sa/4.0/>).
 
-## Translations ##
+## Traduzioni ##
 
-* [Spanish](https://github.com/raulexposito/the-little-go-book/tree/master/es) by Raúl Expósito
-* [Chinese](https://github.com/songleo/the-little-go-book_ZH_CN) by Songleo
-* [Traditional Chinese](https://github.com/kevingo/the-little-go-book) by KevinGo
-* [Vietnamese](https://github.com/quangnh89/the-little-go-book/blob/master/vi/readme.md) by Quang Nguyễn
+* [Spagnolo](https://github.com/raulexposito/the-little-go-book/tree/master/es) di Raúl Expósito
+* [Cinese](https://github.com/songleo/the-little-go-book_ZH_CN) di Songleo
+* [Cinese Tradizionale](https://github.com/kevingo/the-little-go-book) di KevinGo
+* [Vietnamita](https://github.com/quangnh89/the-little-go-book/blob/master/vi/readme.md) di Quang Nguyễn
+* [Italiano](https://github.com/francescomalatesta/the-little-go-book) di Francesco Malatesta
 
-## Formats ##
-The book is written in [Markdown](http://daringfireball.net/projects/markdown/) and converted to PDF using [Pandoc](http://johnmacfarlane.net/pandoc/).
+## Formati ##
+Questo libro è stato scritto in [Markdown](http://daringfireball.net/projects/markdown/) e convertito in PDF usando [Pandoc](http://johnmacfarlane.net/pandoc/).
 
-The TeX template makes use of [Lena Herrmann's JavaScript highlighter](http://lenaherrmann.net/2010/05/20/javascript-syntax-highlighting-in-the-latex-listings-package).
+Il TeX template fa uso del [Lena Herrmann's JavaScript highlighter](http://lenaherrmann.net/2010/05/20/javascript-syntax-highlighting-in-the-latex-listings-package).
 
-Kindle and ePub format provided using [Pandoc](http://johnmacfarlane.net/pandoc/).
+Il formato Kindle ed ePub è ottenuto sempre grazie a [Pandoc](http://johnmacfarlane.net/pandoc/).
 
-## Generating books ##
-Packages listed below are for Ubuntu. If you use another OS or distribution names would be similar.
+## Come Generare il Libro ##
+I package qui di seguito sono per Ubuntu. Se usi altri sistemi operativi, comunque, la procedura non dovrebbe essere così diversa.
 
 ### PDF
 
-#### Dependencies
+#### Requisiti
 
-Packages:
+Package:
 
 * `pandoc`
 * `texlive-xetex`
 * `texlive-latex-extra`
 * `texlive-latex-recommended`
 
-You should have [some fonts](https://github.com/karlseguin/the-little-redis-book/blob/master/common/pdf-template.tex#L11) installed too.
-Or you could change them to other ones if you want. Consider that fonts could cause [building troubles](https://github.com/karlseguin/the-little-redis-book/issues/26).
+Avrai bisogno di [alcuni font](https://github.com/karlseguin/the-little-redis-book/blob/master/common/pdf-template.tex#L11).
 
-#### Building
+Se vuoi, sentiti libero di cambiarli, ma conta che potrebbero [causare qualche problema](https://github.com/karlseguin/the-little-redis-book/issues/26).
 
-Run `make en/go.pdf`.
+#### Generare il Libro
+
+Esegui `make it/go.pdf`.
 
 ### ePub
 
-#### Dependencies
+#### Dipendenze
 
-Packages:
+Package:
 
 * `pandoc`
 
-#### Building
+#### Generare il Libro
 
-Run `make en/go.epub`.
+Run `make it/go.epub`.
 
 ### Mobi
 
-#### Dependencies
+#### Dipendenze
 
 Packages:
 
 * `pandoc`
 
-You should have [KindleGen](http://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000765211) installed too.
+Avrai bisogno di [KindleGen](http://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000765211) installato sulla tua macchina.
 
-#### Building
+#### Generare il Libro
 
-Run `make en/go.mobi`.
+Run `make it/go.mobi`.
 
-## Title Image ##
-A PSD of the title image is included. The font used is [Comfortaa](http://www.dafont.com/comfortaa.font).
+## Immagine di Copertina ##
+In questo repository troverai anche il PSD dell'immagine della copertina del libro. Il font usato è [Comfortaa](http://www.dafont.com/comfortaa.font).
