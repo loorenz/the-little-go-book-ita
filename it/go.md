@@ -1594,7 +1594,7 @@ Go viene spesso descritto come un linguaggio concurrent-friendly, cioè orientat
 
 ## Le Goroutine
 
-Una goroutine è simile ad un thread, con la differenza di essere schedulato da Go e non dal sistema operativo. Il codice che viene eseguito in una goroutine può essere seguito in parallelo con altro codice. Vediamo un esempio:
+Una goroutine è simile ad un thread, con la differenza di essere gestito da Go e non dal sistema operativo. Il codice che viene eseguito in una goroutine può essere eseguito in parallelo con altro codice. Vediamo un esempio:
 
 ```go
 package main
@@ -1607,7 +1607,7 @@ import (
 func main() {
   fmt.Println("start")
   go process()
-  time.Sleep(time.Millisecond * 10) // this is bad, don't do this!
+  time.Sleep(time.Millisecond * 10) // ciò è male, non fare ciò che è male!
   fmt.Println("done")
 }
 
@@ -1624,17 +1624,17 @@ go func() {
 }()
 ```
 
-Le Goroutine sono semplici da creare, come vedi, ed hanno un piccolissimo overhead. Di base, più goroutine potranno essere eseguite sullo stesso thread del sistema operativo. Il threading model a cui si fa riferimento viene descritto come il M:N, nel senso che abbiamo M thread dell'applicazione che girano su N thread del sistema operativo.
+Le Goroutine sono semplici da creare, come vedi, ed hanno un piccolissimo overhead. Di base, più goroutine possono essere eseguite sullo stesso thread del sistema operativo. Il threading model a cui si fa riferimento viene descritto come il M:N, nel senso che abbiamo M thread dell'applicazione che girano su N thread del sistema operativo.
 
-Il rapporto non è quindi 1:1. Il risultato è che su un hardware decente è possibile far girare, contemporaneamente, milioni di goroutine!
+Il rapporto non è quindi 1:1. Di conseguenza, ne viene fuori che su un hardware decente è possibile far girare, contemporaneamente, milioni di goroutine!
 
 Inoltre, tutta la complessità del mapping e scheduling delle goroutine è nascosta allo sviluppatore. Noi diciamo semplicemente "ok, questo codice dovrebbe essere eseguito in modo asincrono" e Go si occupa del resto.
 
-Adesso torniamo per un secondo al nostro esempio: ti starai chiedendo perché mai abbiamo usato lo `Sleep` per fermare l'applicazione. Domanda legittima: la verità è che omettendo l'istruzione il processo principale termina prima dell'esecuzione della goroutine! Certo, nel lavoro di tutti i giorni non è qualcosa che si può fare: scopriamo come coordinare il nostro codice e fare le cose per bene!
+Adesso torniamo per un secondo al nostro esempio: ti starai chiedendo perché mai abbiamo usato lo `Sleep` per fermare l'applicazione. Domanda legittima: la verità è che omettendo l'istruzione il processo principale termina prima dell'esecuzione della goroutine! Inutile dire che nel lavoro vero, di tutti i giorni, non è qualcosa che si può fare: scopriamo come coordinare il nostro codice e fare le cose per bene!
 
 ## Sincronizzazione
 
-Creare una goroutine, come abbiamo visto, è roba da poco. Così facili che è un attimo arrivare a crearne quante a bizzeffe. Tuttavia, il codice concorrente va coordinato. Ed ecco che arriviamo, così, al secondo strumento che ci viene messo a disposizione da Go: i channel. Prima di guardare i channel da vicino, però, vediamo un po' di cose sulle basi della programmazione concorrente.
+Creare una goroutine, come abbiamo visto, è roba da poco. Così facile che è un attimo arrivare a crearne quante ne vogliamo, a bizzeffe. Tuttavia, il codice concorrente va coordinato. Ed ecco che arriviamo, così, al secondo strumento che ci viene messo a disposizione da Go: i channel. Prima di guardare i channel da vicino, però, vediamo un po' di basi della programmazione concorrente.
 
 Scrivere codice concorrente richiede attenzione. Nello specifico, tanta attenzione su dove e come leggi (e scrivi). In un certo senso è come sviluppare senza un garbage collector: devi pensare ai tuoi dati da una diversa angolazione, stando attenti ai vari pericoli che ci si possono parare davanti.
 
@@ -1667,7 +1667,7 @@ Rispondi: quale pensi sarà l'output di questo codice?
 
 Se stai per dirmi `1, 2, 3, 4 ... 20` reggiti forte: hai sia ragione che torto! Mi spiego: è assolutamente che vero che, di tanto in tanto, eseguendo questo codice otterrai quel risultato, in sequenza. Tuttavia, la realtà è diversa: il comportamento di questo codice è indefinito perché abbiamo più goroutine che vengono eseguite contemporaneamente. Che scrivono tutte nella variabile `counter`. Una di queste goroutine potrebbe leggerne il valore mentre un'altra ci scrive sopra.
 
-Fidati se ti dico che è una cosa decisamente pericolosa. Quel `counter++`, piccolo ed indifeso, una volta compilato viene spezzato in tante istruzioni assembly e... la natura della loro esecuzione, di conseguenza, cambia in base alla piattaforma su cui vengono eseguite. I numeri quindi verranno stampati in un'ordine strano, a volte alcuni di questi numeri mancheranno, altre volte li vedrai duplicati. Per assurdo, la stessa applicazione potrebbe crashare.
+Fidati se ti dico che è una cosa decisamente pericolosa. Quel `counter++`, piccolo ed indifeso, una volta compilato viene spezzato in tante istruzioni assembly e... la natura della loro esecuzione, di conseguenza, cambia in base alla piattaforma su cui vengono eseguite. I numeri quindi verranno stampati in un'ordine strano, a volte alcuni di questi numeri mancheranno, altre volte li vedrai duplicati. Per assurdo, la stessa applicazione potrebbe andare in crash.
 
 L'unica cosa "concorrente" che puoi fare in tutta sicurezza è leggere quella variabile. Puoi avere tutti i lettori di questo mondo lì, appesi, ma qualsiasi scrittura deve essere sincronizzata. Ci sono vari modi di raggiungere l'obiettivo: il più comune di tutti è l'uso di un mutex:
 
@@ -1702,9 +1702,9 @@ func incr() {
 
 Un mutex non fa altro he serializzare gli accessi al codice sotto lock. Abbiamo definito il nostro lock con `lock sync.Mutex`. Di default il valore di `sync.Mutex` è "unlocked", sbloccato.
 
-Sembra semplice, vero? Lo è, anche se l'esempio che hai appena visto, devo ammetterlo, è ingannevole. C'è infatti tutta una serie di bug che si possono presentare quando si parla di programmazione concorrente. In primis perché non è sempre così ovvio capire quale codice si vuole "proteggere": può sembrare comodo usare un lock che copre un bel po' di codice, ma non è la cosa migliore da fare. Anche perché rischiamo di fare un progetto per un'autostrada a dieci corsie e finire comunque con una stradina a corsia singola.
+Sembra semplice, vero? Lo è, anche se l'esempio che hai appena visto, devo ammetterlo, è ingannevole. C'è comunque una serie di bug che si possono presentare quando si parla di programmazione concorrente. In primis perché non è sempre così ovvio capire quale codice si vuole "proteggere": può sembrare comodo usare un lock che copre un bel po' di codice, ma non è la cosa migliore da fare. Anche perché rischiamo di fare un progetto per un'autostrada a dieci corsie e finire comunque con una stradina a corsia singola.
 
-Un altro problema riguarda i deadlock. Con un singolo lock il problema non si pone, ma cosa succede se si "accavallano" più lock insieme? Devi sapere che è straordinariamente semplice trovarsi nella situazione in cui la goroutine A effettua un lock A ma ha bisogno di accedere all'elemento sotto un lock B, mentre una goroutine B sta bloccando del codice tramite il lock B che a sua volta ha bisogno di accesso al lock A. Una cosa del genere è difficile da capire, figuriamoci da debuggare.
+Un altro problema riguarda i deadlock. Con un singolo lock il problema non si pone, ma cosa succede se si "accavallano" più lock insieme? Devi sapere che è straordinariamente semplice trovarsi nella situazione in cui la goroutine A effettua un lock A ma ha bisogno di accedere all'elemento sotto un lock B, mentre una goroutine B sta bloccando del codice tramite il lock B che a sua volta ha bisogno di accesso al lock A. Una cosa del genere è difficile da capire: figuriamoci da debuggare!
 
 Volendo, possiamo creare un deadlock con un solo lock... basta scordarsi di sbloccarlo a fine esecuzione! Guarda qui:
 
@@ -1731,7 +1731,7 @@ La programmazione concorrente non è comunque così semplice. C'è tanto da cono
 
 La programmazione concorrente però non consiste solo nel serializzare gli accessi alle scritture e via. C'è anche, come dicevamo prima, la parte di coordinazione delle goroutine. Lo so che forse ci speravi, ma mettere in sleep il processo per dieci millisecondi non è la soluzione migliore (soprattutto la più elegante).
 
-Ricorda che per situazioni molto semplici i mutex sono una soluzione più che sufficiente. Esistono, usali! Per situazioni più complesse, invece... è arrivato il momento di scoprire i `channel` e capire a cosa servono.
+Ricorda che per situazioni molto semplici i mutex sono una soluzione più che sufficiente. Esistono, quindi... usali! Per situazioni più complesse, invece, è arrivato il momento di scoprire i `channel` e capire a cosa servono.
 
 ## Channel
 
@@ -1739,7 +1739,7 @@ Quando si parla di programmazione concorrente, la vera sfida è una sola: la con
 
 In Go, i channel si occupano di rendere più semplice la programmazione concorrente portando i dati "al di fuori" del quadro generale. Immagina i channel come un canale di comunicazione tra diverse goroutine, che così facendo possono passarsi dei dati. Il risultato? In un qualsiasi momento dell'esecuzione del nostro codice, solo una goroutine ha accesso effettivamente al dato.
 
-Un channel, come qualsiasi altra cosa, ha un tipo. Viene incluso anche il tipo di dato che passeremo nel canale. Ad esempio, per creare un channel che dovrà "passare" un intero, scriveremo:
+Un channel, come qualsiasi altra cosa, ha un tipo. Nella definizione però viene incluso anche il tipo di dato che passeremo nel canale. Ad esempio, per creare un channel che dovrà "passare" un intero, scriveremo:
 
 ```go
 c := make(chan int)
@@ -1767,7 +1767,7 @@ La freccia, come puoi notare, punta nella direzione in cui il dato procede.
 
 Un'ultima cosa prima di buttarci nel primo esempio pratico: ricevere ed inviare ad un canale è un'operazione bloccante. Quando riceviamo da un canale, l'esecuzione della goroutine non continua fin quando il dato non è disponibile. Allo stesso modo funziona l'invio: se il dato non viene ricevuto, l'esecuzione non prosegue.
 
-Consideriamo ora un sistema con dei dati in ingresso che vogliamo gestire in goroutine separate: una necessità abbastanza comune. Eseguire tutto su una singola goroutine significherebbe mandare in timeout i client e non è quello che vogliamo. Per prima cosa, quindi, scriveremo il nostro worker. Una semplice funzione che renderò parte di una struttura.
+Consideriamo ora un sistema con dei dati in ingresso che vogliamo gestire in goroutine separate: una necessità abbastanza comune. Eseguire tutto su una singola goroutine significherebbe mandare in timeout i client e non è quello che vogliamo. Per prima cosa, quindi, scriveremo il nostro worker: una semplice funzione che renderò parte di una struttura.
 
 ```go
 type Worker struct {
@@ -1863,7 +1863,7 @@ Se nessun worker è disponibile, memorizziamo i dati in arrivo in una specie di 
 c := make(chan int, 100)
 ```
 
-Facendo questa modifica inizierai a risolvere il problema. Tuttavia, l'esecuzione non è comunque ottimale. I buffered channel non aggiungono una maggiore capacità: creano soltanto un "cuscinetto" per ammortizzare dei picchi particolarmente fastidiosi. Il nostro esempio funziona, invece, in maniera diversa: mettiamo continuamente dati nel channel, troppi per i nostri worker.
+Facendo questa modifica inizierai a risolvere il problema. Tuttavia, l'esecuzione non è comunque ottimale. I buffered channel non aggiungono una maggiore capacità: creano soltanto un "cuscinetto" per ammortizzare dei picchi particolarmente fastidiosi. Il nostro esempio funziona, invece, in maniera diversa: mettiamo continuamente dati nel channel, troppi per i nostri worker nonstante tutto.
 
 Prova a modificare come segue il codice del ciclo:
 
@@ -1895,8 +1895,9 @@ Bene: ora cambiamo il loop `for` visto prima.
 for {
   select {
   case c <- rand.Int():
-    // codice opzionale
+    // qui l'elemento è entrato correttamente nel channel
   default:
+    // in questo caso il channel non è disponibile.
     // questa parte può essere lasciata vuota
     // se si vuole scartare "silenziosamente" il dato
     fmt.Println("dropped")
@@ -1907,7 +1908,7 @@ for {
 
 Facendo un rapido calcolo, la situazione è la seguente: inseriamo nel channel 20 messaggi al secondo. I nostri worker ne possono gestire 10 al secondo. La metà dei messaggi viene quindi scartata.
 
-L'esecuzione ora è più fluida, ma il problema rimane. Chiaramente questo è solo un assaggio di quello che puoi fare con `select`: il suo scopo è soprattutto gestire più di un canale per volta. Ad esempio, con `select` potremmo specificare più `case` con più canali. Se nessuno di questi canali è disponibile, allora viene eseguito il codice in `default`.
+L'esecuzione ora è più fluida ma il problema rimane, se consideriamo che stiamo scartando un sacco di dati. Chiaramente questo è solo un assaggio di quello che puoi fare con `select`: il suo scopo è soprattutto gestire più di un canale per volta. Ad esempio, con `select` potremmo specificare più `case` con più canali. Se nessuno di questi canali è disponibile, allora viene eseguito il codice in `default`.
 
 ### Timeout
 
@@ -1953,7 +1954,7 @@ case t := <-time.After(time.Millisecond * 100):
 Attenzione quindi alle nostre `select`. Fai caso al fatto che si, stiamo inviando a `c` ma stiamo ricevendo da `time.After`. Volendo fare un piccolo riassunto, ecco come funziona una `select`:
 
 * viene scelto il primo channel disponibile;
-* se più di un channel è disponibile, allora viene scelto casualmente;
+* se più di un channel è disponibile, quello da usare viene scelto casualmente;
 * se non ci sono channel disponibili, il caso `default` viene scelto;
 * se non c'è un `default`, la `select` diventa bloccante;
 
@@ -1975,13 +1976,13 @@ for {
 
 Se sei nuovo al mondo della programmazione concorrente, tutto questo ti sembrerà "troppo". Non temere, è normale: è un argomento che richiede pratica, studio e cura. Go, nel suo piccolo, cerca di renderlo più digeribile.
 
-Le goroutine cercano di astrarre tutto quello che serve per eseguire del codice concorrente, mentre i channel aiutano ad eliminare alcuni bug fastidiosi che possono sbucare quando abbiamo bisogno di condividere dei dati tra più goroutine. Chiaramente, usare questi strumenti non eliminerà tutti i possibili bug: non succede mai. Ricordatelo. Aiuta, però, pensare al cambio di approccio: dal "codice pericoloso" ad un insieme di messaggi che vengono mandati da una goroutine all'altra.
+Le goroutine cercano di astrarre tutto quello che serve per eseguire del codice concorrente, mentre i channel aiutano ad eliminare alcuni bug fastidiosi che possono sbucare quando abbiamo bisogno di condividere dei dati tra più goroutine. Chiaramente, usare questi strumenti non eliminerà tutti i possibili bug: non succede mai. Ricordatelo. Aiuta, tuttavia, pensare al cambio di approccio: dal "codice pericoloso" ad un insieme di messaggi che vengono mandati da una goroutine all'altra.
 
 Detto questo, non scordiamoci che le primitive come quelle presenti nel package `sync` (come il Mutex) non sono il male. A volte ti serviranno e ne farai buon uso. Ne sono certo.
 
 # Conclusioni
 
-Recentemente ho sentito descrivere Go come un linguaggio *noioso*. Noioso perché tutto sommato semplice da imparare, da scrivere e, soprattutto, da leggere. Se però ci fai caso, ho usato tre capitoli per spiegare i tipi, come funzionano, come dichiarare le variabili e tutto il resto.
+Recentemente ho sentito descrivere Go come un linguaggio *noioso*. Noioso perché tutto sommato semplice da imparare, da scrivere e, soprattutto, da leggere. Se però ci fai caso, ho usato ben tre capitoli per spiegare i tipi, come funzionano, come dichiarare le variabili e tutto il resto.
 
 Se vieni dai linguaggi a tipizzazione statica non credo tu abbia avuto problemi. Per te sarà stato, al massimo, una rinfrescata di alcuni concetti che già conoscevi. Puntatori, slice e così via.
 
