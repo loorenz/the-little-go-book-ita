@@ -20,7 +20,7 @@ Questa è la traduzione in Italiano, di Francesco Malatesta. Puoi trovarla qui:
 
 # Introduzione
 
-Ho sempre avuto un rapporto di amore/odio con l'idea di imparare un nuovo linguaggio. Da una parte, infatti, i linguaggi sono fondamentali per il nostro lavoro: studiarli in un crto modo ha un impatto notevolissimo. Hai presente quel momento *aha!* che va a ridefinire le aspettative che abbiamo nei confronti di quel linguaggio? Ecco. Dall'altra parte, però, il design di un linguaggio è qualcosa di "incrementale". Impari nuove parole chiave, tipi, per poi passare al coding style e via, verso le librerie, community, paradigmi. A volte ci chiediamo se ne valga la pena davvero.
+Ho sempre avuto un rapporto di amore/odio con l'idea di imparare un nuovo linguaggio. Da una parte, infatti, i linguaggi sono fondamentali per il nostro lavoro: studiarli in un certo modo ha un impatto notevolissimo. Hai presente quel momento *aha!* che va a ridefinire le aspettative che abbiamo nei confronti di quel linguaggio? Ecco. Dall'altra parte, però, il design di un linguaggio è qualcosa di "incrementale". Impari nuove parole chiave, tipi, per poi passare al coding style e via, verso le librerie, community, paradigmi. A volte ci chiediamo se ne valga la pena davvero.
 
 Beh, la verità è che *dobbiamo* andare avanti. A voler essere più precisi, dovremmo sempre essere tutto sommato contenti di imparare qualcosa di nuovo. Piano piano, un passo alla volta, possiamo fare nostre tutte quelle nozioni che nel tempo hanno un'importanza sempre maggiore: leggibilità, performance, testabilità, gestione delle dipendenze, documentazione, profiling e così via.
 
